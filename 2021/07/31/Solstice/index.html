@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="Exploitation Guide for SolsticeSummaryThis machine is exploited by combining a LFI with a log poisoning attack. It is escalated with a world-writable file. EnumerationNmapWe start off by running an">
+<meta name="description" content="Exploitation Guide for SolsticeSummaryThis machine is exploited by combining a LFI with a log poisoning attack. It is escalated with a world-writable file. EnumerationNmapWe start off by running an n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solstice">
 <meta property="og:url" content="https://sev1on.github.io/2021/07/31/Solstice/index.html">
 <meta property="og:site_name" content="Sev1on">
-<meta property="og:description" content="Exploitation Guide for SolsticeSummaryThis machine is exploited by combining a LFI with a log poisoning attack. It is escalated with a world-writable file. EnumerationNmapWe start off by running an">
+<meta property="og:description" content="Exploitation Guide for SolsticeSummaryThis machine is exploited by combining a LFI with a log poisoning attack. It is escalated with a world-writable file. EnumerationNmapWe start off by running an n">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-07-31T03:11:12.000Z">
-<meta property="article:modified_time" content="2021-07-31T11:50:56.886Z">
+<meta property="article:modified_time" content="2021-07-31T11:52:03.095Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Walkthrough">
 <meta name="twitter:card" content="summary">
@@ -321,7 +321,6 @@
 
       
         <span id="more"></span>
-
 <h1 id="Exploitation-Guide-for-Solstice"><a href="#Exploitation-Guide-for-Solstice" class="headerlink" title="Exploitation Guide for Solstice"></a><strong>Exploitation Guide for Solstice</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><p>This machine is exploited by combining a LFI with a log poisoning attack. It is escalated with a world-writable file.</p>
 <h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap -p- -sV 192.168.120.167</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-11 16:27 EDT</span><br><span class="line">Nmap scan report for 192.168.120.167</span><br><span class="line">Host is up (0.043s latency).</span><br><span class="line">Not shown: 65428 closed ports, 96 filtered ports</span><br><span class="line">PORT      STATE SERVICE     VERSION</span><br><span class="line">21/tcp    open  ftp         pyftpdlib 1.5.6</span><br><span class="line">22/tcp    open  ssh         OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)</span><br><span class="line">25/tcp    open  smtp        Exim smtpd 4.92</span><br><span class="line">80/tcp    open  http        Apache httpd 2.4.38 ((Debian))</span><br><span class="line">139/tcp   open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)</span><br><span class="line">445/tcp   open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)</span><br><span class="line">2121/tcp  open  ftp         pyftpdlib 1.5.6</span><br><span class="line">3128/tcp  open  http-proxy  Squid http proxy 4.6</span><br><span class="line">8593/tcp  open  http        PHP cli server 5.5 or later (PHP 7.3.14-1)</span><br><span class="line">54787/tcp open  http        PHP cli server 5.5 or later (PHP 7.3.14-1)</span><br><span class="line">62524/tcp open  ftp         FreeFloat ftpd 1.00</span><br><span class="line">Service Info: Host: solstice; OSs: Linux, Windows; CPE: cpe:/o:linux:linux_kernel, cpe:/o:microsoft:windows</span><br><span class="line"></span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line"></span><br></pre></td></tr></table></figure>
