@@ -144,6 +144,36 @@
       </tags>
   </entry>
   <entry>
+    <title>Debian设置GRUB启动参数禁用IPV6</title>
+    <url>/undefined/Debian%E8%AE%BE%E7%BD%AEGRUB%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0%E7%A6%81%E7%94%A8IPV6/</url>
+    <content><![CDATA[<h1 id="Debian设置GRUB启动参数禁用IPV6"><a href="#Debian设置GRUB启动参数禁用IPV6" class="headerlink" title="Debian设置GRUB启动参数禁用IPV6"></a>Debian设置GRUB启动参数禁用IPV6</h1><p>在国外服务商租用VPS后，发现无法使用ping命令和goolge进行交互，并出现十六进制的MAC地址</p>
+<p>原因是Linux系统IPV6优先级最高，默认使用IPV6地址进行ping命令。</p>
+<p>我们可以在系统中设置GRUB启动参数禁用IPV6</p>
+<p>编辑 <code>/etc/default/grub</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/default/grub</span><br></pre></td></tr></table></figure>
+
+<p>找到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet&quot;</span><br></pre></td></tr></table></figure>
+
+<p>修改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GRUB_CMDLINE_LINUX_DEFAULT=&quot;ipv6.disable=1 quiet&quot;</span><br></pre></td></tr></table></figure>
+
+<p>随后执行命令更新GRUB启动参数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update-grub</span><br></pre></td></tr></table></figure>
+
+<p>最后重启系统即可</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Debian</tag>
+        <tag>GRUB</tag>
+        <tag>IPV6</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Funbox1</title>
     <url>/undefined/Funbox1/</url>
     <content><![CDATA[<h1 id="Exploitation-Guide-for-Funbox"><a href="#Exploitation-Guide-for-Funbox" class="headerlink" title="Exploitation Guide for Funbox"></a><strong>Exploitation Guide for Funbox</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
