@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="Exploitation Guide for Pwned1SummaryThis machine is exploited by disclosure of ftp user credentials and downloadable SSH key in the ftp folder.It is escalated via a vulnerable sudo script and docker g">
+<meta name="description" content="This machine is exploited by disclosure of ftp user credentials and downloadable SSH key in the ftp folder.It is escalated via a vulnerable sudo script and docker group privileges.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Pwned1">
 <meta property="og:url" content="https://sev1on.github.io/undefined/Pwned1/index.html">
 <meta property="og:site_name" content="Sev1on">
-<meta property="og:description" content="Exploitation Guide for Pwned1SummaryThis machine is exploited by disclosure of ftp user credentials and downloadable SSH key in the ftp folder.It is escalated via a vulnerable sudo script and docker g">
+<meta property="og:description" content="This machine is exploited by disclosure of ftp user credentials and downloadable SSH key in the ftp folder.It is escalated via a vulnerable sudo script and docker group privileges.">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-07-01T12:11:12.000Z">
-<meta property="article:modified_time" content="2021-08-01T03:09:57.892Z">
+<meta property="article:modified_time" content="2021-08-01T07:28:29.008Z">
 <meta property="article:author" content=" ">
 <meta property="article:tag" content="Script">
 <meta property="article:tag" content="Ftp">
@@ -373,6 +373,10 @@
           
 
           
+              <div class="post-description">
+                  This machine is exploited by disclosure of ftp user credentials and downloadable SSH key in the ftp folder.It is escalated via a vulnerable sudo script and docker group privileges.
+              </div>
+          
 
         </div>
       </header>
@@ -387,10 +391,7 @@
       
 
       
-        <h1 id="Exploitation-Guide-for-Pwned1"><a href="#Exploitation-Guide-for-Pwned1" class="headerlink" title="Exploitation Guide for Pwned1"></a><strong>Exploitation Guide for Pwned1</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><p>This machine is exploited by disclosure of ftp user credentials and downloadable SSH key in the ftp folder.It is escalated via a vulnerable sudo script and docker group privileges.</p>
-<span id="more"></span>
-
-<h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
+        <h1 id="Exploitation-Guide-for-Pwned1"><a href="#Exploitation-Guide-for-Pwned1" class="headerlink" title="Exploitation Guide for Pwned1"></a><strong>Exploitation Guide for Pwned1</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ nmap 192.168.120.220</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-09-08 16:54 EDT</span><br><span class="line">Nmap scan report for 192.168.120.220</span><br><span class="line">Host is up (0.038s latency).</span><br><span class="line">Not shown: 997 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">21/tcp open  ftp</span><br><span class="line">22/tcp open  ssh</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="Web-application"><a href="#Web-application" class="headerlink" title="Web application"></a><strong>Web application</strong></h3><p>We start off by exploring the web app.There is nothing really worthy on the main page but the <code>/robots.txt</code> page reveals interesting pages to explore.</p>
@@ -560,7 +561,7 @@
                <a href="/archives/">
 	      <!-- <a href="/archives/%7C%7C%20fa-solid%20fa-align-center"> -->
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -571,7 +572,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -582,7 +583,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
